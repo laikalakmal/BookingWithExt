@@ -1,4 +1,6 @@
-﻿using Core.Domain.Entities;
+﻿using Core.Application.Services;
+using Core.Application.Interfaces;
+using Core.Domain.Entities;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,15 +15,17 @@ namespace ProductService.API.Controllers
         private readonly DbContext _context;
         private readonly IProductService _productService;
 
+
         public ProductController(AppDbContext context, IProductService productService)
         {
             _context = context;
             _productService = productService;
+
         }
 
 
 
-        [HttpGet("products")]
+        [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
             var products = await _productService.GetProductsAsync();
@@ -31,5 +35,20 @@ namespace ProductService.API.Controllers
             }
             return Ok(products);
         }
+
+        [HttpPost("sync")]
+        public async Task<IActionResult> SyncProducts()
+        {
+            try
+            {
+                var count = await _productService.SyncProductsFromExternalAsync();
+                return Ok($"Successfully synced {count} products.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error syncing products: {ex.Message}");
+            }
+        }
+
     }
 }

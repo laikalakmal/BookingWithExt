@@ -1,8 +1,10 @@
 using Core.Application.Interfaces;
-using Core.Application.Features;
+using Core.Application.Services;
 using Infrastructure.Persistence;
-using Infrastructure.Persistence.Repository;
+using Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Infrastructure.Adapters;
+
 
 
 internal class Program
@@ -15,9 +17,11 @@ internal class Program
             options.UseSqlServer(builder.Configuration.GetConnectionString("ProductDb")));
 
         builder.Services.AddScoped<IProductRepository, ProductRepository>();
-        builder.Services.AddScoped<IProductService, Core.Application.Features.ProductService>();
+        builder.Services.AddScoped<IProductService, Core.Application.Services.ProductService>();
+       
 
-        // Add services to the container.
+        // Register the external API adapter
+        builder.Services.AddScoped<IExternalProductApiAdapter, TourApiAdapter>();
 
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

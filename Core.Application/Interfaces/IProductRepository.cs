@@ -9,6 +9,7 @@ namespace Core.Application.Interfaces
 {
     public interface IProductRepository
     {
+        Task AddProductsAsync(List<Product> allProducts);
         Task<IEnumerable<Product>> GetProductsAsync();
     }
 }
