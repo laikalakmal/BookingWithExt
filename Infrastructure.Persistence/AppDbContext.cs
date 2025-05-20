@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Core.Domain.Entities;
+﻿using Core.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Text.Json;
 
 namespace Infrastructure.Persistence
 {
@@ -7,7 +9,6 @@ namespace Infrastructure.Persistence
     {
         public DbSet<Product> Products { get; set; }
         public DbSet<TourPackage> TourPackages { get; set; }
-        public DbSet<HolidayPackage> HolidayPackages { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -15,35 +16,90 @@ namespace Infrastructure.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Product>(entity =>
+            modelBuilder.ApplyConfiguration(new ProductConfiguration());
+            modelBuilder.ApplyConfiguration(new TourPackageConfiguration());
+        }
+    }
+
+    // Product configuration
+    internal class ProductConfiguration : IEntityTypeConfiguration<Product>
+    {
+        public void Configure(EntityTypeBuilder<Product> entity)
+        {
+            entity.ToTable("Products");
+
+            entity.OwnsOne(p => p.Price, price =>
             {
-                entity.Property(p => p.Price).HasColumnType("decimal(18,2)");
-                entity.ToTable("products");
+                price.Property(p => p.Amount).HasColumnType("decimal(18,2)");
+                price.Property(p => p.Currency).HasConversion<string>();
             });
-            modelBuilder.Entity<TourPackage>().ToTable("TourPackages");
-            modelBuilder.Entity<HolidayPackage>().ToTable("HolidayPackages");
+        }
+    }
 
-            // Seed dummy data for TourPackage
-            modelBuilder.Entity<TourPackage>().HasData(
-                new TourPackage(
-                    "TP001", "City Tour", 99.99m, "A fun city tour", "Tour", "tourApi", "1 day", "citytour.jpg")
-                {
-                    Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
-                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                }
-            );
+    // TourPackage configuration
+    internal class TourPackageConfiguration : IEntityTypeConfiguration<TourPackage>
+    {
+        public void Configure(EntityTypeBuilder<TourPackage> entity)
+        {
+            entity.Property(e => e.Destination)
+                .HasJsonConversion()
+                .HasColumnType("nvarchar(max)");
 
-            // Seed dummy data for HolidayPackage
-            modelBuilder.Entity<HolidayPackage>().HasData(
-                new HolidayPackage(
-                    "HP001", "Beach Holiday", 499.99m, "Relaxing beach holiday", "Holiday", "HolidayApi", "7 days", "beachholiday.jpg")
-                {
-                    Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
-                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                }
-            );
+            entity.Property(e => e.Duration)
+                .HasJsonConversion()
+                .HasColumnType("nvarchar(max)");
+
+            entity.Property(e => e.Accommodation)
+                .HasJsonConversion()
+                .HasColumnType("nvarchar(max)");
+
+            entity.Property(e => e.Transportation)
+                .HasJsonConversion()
+                .HasColumnType("nvarchar(max)");
+
+            entity.Property(e => e.CancellationPolicy)
+                .HasJsonConversion()
+                .HasColumnType("nvarchar(max)");
+
+            entity.Property(e => e.Availability)
+                .HasJsonConversion()
+                .HasColumnType("nvarchar(max)");
+
+            entity.Property(e => e.Inclusions)
+                .HasJsonConversion()
+                .HasColumnType("nvarchar(max)");
+
+            entity.Property(e => e.Exclusions)
+                .HasJsonConversion()
+                .HasColumnType("nvarchar(max)");
+
+            entity.Property(e => e.Images)
+                .HasJsonConversion()
+                .HasColumnType("nvarchar(max)");
+
+            entity.Property(e => e.TermsAndConditions)
+                .HasColumnType("nvarchar(max)");
+
+            entity.Property(e => e.LastUpdated)
+                .HasColumnType("datetime2");
+
+            entity.Property(e => e.DepartureDates)
+                .HasConversion(
+                 v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                  v => JsonSerializer.Deserialize<List<DateTime>>(v, (JsonSerializerOptions?)null) ?? new List<DateTime>())
+                .HasColumnType("nvarchar(max)");
+
+        }
+    }
+
+    // Helper extension method
+    internal static class ValueConversionExtensions
+    {
+        public static PropertyBuilder<T> HasJsonConversion<T>(this PropertyBuilder<T> propertyBuilder)
+        {
+            return propertyBuilder.HasConversion(
+                v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                v => JsonSerializer.Deserialize<T>(v, (JsonSerializerOptions?)null) ?? default!);
         }
     }
 }

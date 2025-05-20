@@ -1,6 +1,11 @@
 using Core.Application.DTOs;
 
-public interface IProductService
+namespace Core.Application.Interfaces
 {
-    Task<IEnumerable<ProductDto>> GetProductsAsync();
+    public interface IProductService
+    {
+        Task<IEnumerable<ProductDto>> GetProductsAsync();
+        Task<int> SyncProductsFromExternalAsync();
+        
+    }
 }
