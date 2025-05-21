@@ -37,11 +37,6 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("nvarchar(13)");
-
                     b.Property<string>("ExternalId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -61,9 +56,41 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.ToTable("Products", (string)null);
 
-                    b.HasDiscriminator().HasValue("Product");
+                    b.UseTptMappingStrategy();
+                });
 
-                    b.UseTphMappingStrategy();
+            modelBuilder.Entity("Core.Domain.Entities.HolidayPackage", b =>
+                {
+                    b.HasBaseType("Core.Domain.Entities.Product");
+
+                    b.Property<string>("CancellationPolicy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Images")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Inclusions")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Property")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoomOptions")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SpecialOffers")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("HolidayPackages", (string)null);
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.TourPackage", b =>
@@ -117,7 +144,7 @@ namespace Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasDiscriminator().HasValue("TourPackage");
+                    b.ToTable("TourPackages", (string)null);
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.Product", b =>
@@ -143,6 +170,24 @@ namespace Infrastructure.Persistence.Migrations
                         });
 
                     b.Navigation("Price")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Core.Domain.Entities.HolidayPackage", b =>
+                {
+                    b.HasOne("Core.Domain.Entities.Product", null)
+                        .WithOne()
+                        .HasForeignKey("Core.Domain.Entities.HolidayPackage", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Core.Domain.Entities.TourPackage", b =>
+                {
+                    b.HasOne("Core.Domain.Entities.Product", null)
+                        .WithOne()
+                        .HasForeignKey("Core.Domain.Entities.TourPackage", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

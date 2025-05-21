@@ -1,4 +1,5 @@
-﻿using Core.Domain.Enums;
+﻿using Core.Domain.Entities.SupportClasses;
+using Core.Domain.Enums;
 
 namespace Core.Domain.Entities
 {
@@ -6,6 +7,7 @@ namespace Core.Domain.Entities
     {
         public TourPackage(
             string externalId,
+            string provider,
             string name,
             Price price,
             string description,
@@ -27,7 +29,7 @@ namespace Core.Domain.Entities
                  price,
                  description,
                  ProductCategory.TourPackage,
-                 "booking.com")
+                 provider)
         {
             Destination = destination;
             Duration = duration;
@@ -46,7 +48,7 @@ namespace Core.Domain.Entities
         protected TourPackage() // Parameterless constructor for EF Core
             : base(string.Empty, string.Empty, Price.Create(0, "USD"), string.Empty, ProductCategory.TourPackage, "booking.com")
         {
-           
+
             Inclusions = new List<string>();
             Exclusions = new List<string>();
             DepartureDates = new List<DateTime>();
@@ -65,11 +67,11 @@ namespace Core.Domain.Entities
         }
 
 
-        public  DestinationInfo  Destination { get; set; }
+        public DestinationInfo Destination { get; set; }
         public DurationInfo Duration { get; set; }
         public List<string> Inclusions { get; set; }
         public List<string> Exclusions { get; set; }
-        public List<DateTime> DepartureDates { get; set; } 
+        public List<DateTime> DepartureDates { get; set; }
         public AccommodationInfo Accommodation { get; set; }
         public TransportationInfo Transportation { get; set; }
         public CancellationPolicyInfo CancellationPolicy { get; set; }
@@ -116,18 +118,5 @@ namespace Core.Domain.Entities
     {
         public string? Type { get; set; }
         public bool Included { get; set; }
-    }
-
-    public class CancellationPolicyInfo
-    {
-        public bool FreeCancellation { get; set; }
-        public string? Deadline { get; set; }
-        public string? Penalty { get; set; }
-    }
-
-    public class AvailabilityInfo
-    {
-        public string? Status { get; set; }
-        public int RemainingSlots { get; set; }
     }
 }

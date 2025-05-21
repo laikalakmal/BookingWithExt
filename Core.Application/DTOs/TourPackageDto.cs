@@ -1,6 +1,5 @@
-﻿using Core.Domain.Enums;
-using System;
-using System.Collections.Generic;
+﻿using Core.Domain.Entities.SupportClasses;
+using Core.Domain.Enums;
 
 namespace Core.Application.DTOs
 {
@@ -19,7 +18,7 @@ namespace Core.Application.DTOs
         public string TermsAndConditions { get; set; }
         public DateTime LastUpdated { get; set; }
 
-        
+
 
         public TourPackageDto(
             Guid id,
@@ -68,7 +67,7 @@ namespace Core.Application.DTOs
             Images = images;
             TermsAndConditions = termsAndConditions;
             LastUpdated = lastUpdated;
-     
+
         }
 
 
@@ -113,18 +112,9 @@ namespace Core.Application.DTOs
             public bool Included { get; set; }
         }
 
-        public class CancellationPolicyInfo
-        {
-            public bool FreeCancellation { get; set; }
-            public string?   Deadline { get; set; }
-            public string?   Penalty { get; set; }
-        }
+       
 
-        public class AvailabilityInfo
-        {
-            public string? Status { get; set; }
-            public int RemainingSlots { get; set; }
-        }
+        
     }
 
 }

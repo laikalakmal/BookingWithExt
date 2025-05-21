@@ -1,15 +1,10 @@
 ﻿using Core.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Application.Interfaces
 {
-    public interface IProductRepository
+    public interface IProductRepository<T> where T : Product
     {
-        Task AddProductsAsync(List<Product> allProducts);
-        Task<IEnumerable<Product>> GetProductsAsync();
+        Task AddProductsAsync(List<T> products);
+        Task<IEnumerable<T>> GetProductsAsync();
     }
 }
