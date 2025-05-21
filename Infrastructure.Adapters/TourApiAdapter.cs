@@ -1,6 +1,7 @@
 ﻿using Core.Application.DTOs;
 using Core.Application.Interfaces;
 using Core.Domain.Enums;
+using Core.Domain.Entities.SupportClasses;
 
 namespace Infrastructure.Adapters
 {
@@ -81,8 +82,8 @@ namespace Infrastructure.Adapters
                         };
 
                     var cancellationPolicy = package.CancellationPolicy is null
-                        ? new TourPackageDto.CancellationPolicyInfo { FreeCancellation = false, Deadline = string.Empty, Penalty = string.Empty }
-                        : new TourPackageDto.CancellationPolicyInfo
+                        ? new CancellationPolicyInfo { FreeCancellation = false, Deadline = string.Empty, Penalty = string.Empty }
+                        : new CancellationPolicyInfo
                         {
                             FreeCancellation = package.CancellationPolicy.FreeCancellation,
                             Deadline = package.CancellationPolicy.Deadline ?? string.Empty,
@@ -90,8 +91,8 @@ namespace Infrastructure.Adapters
                         };
 
                     var availability = package.Availability is null
-                        ? new TourPackageDto.AvailabilityInfo { Status = string.Empty, RemainingSlots = 0 }
-                        : new TourPackageDto.AvailabilityInfo
+                        ? new AvailabilityInfo { Status = string.Empty, RemainingSlots = 0 }
+                        : new AvailabilityInfo
                         {
                             Status = package.Availability.Status ?? string.Empty,
                             RemainingSlots = package.Availability.RemainingSlots
@@ -104,7 +105,7 @@ namespace Infrastructure.Adapters
                         price: price,
                         description: package.Description ?? string.Empty,
                         category: ProductCategory.TourPackage,
-                        provider: "TourCompanyApi",
+                        provider: "booking.com",
                         imageUrl: package.Images?.FirstOrDefault() ?? string.Empty,
                         createdAt: DateTime.UtcNow,
                         updatedAt: DateTime.UtcNow,

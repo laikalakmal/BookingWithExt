@@ -1,11 +1,12 @@
 ﻿using Core.Application.DTOs;
 using Core.Domain.Entities;
+using Core.Domain.Entities.SupportClasses;
 
 namespace Core.Application.Mappings
 {
-    public class TourPackageMapper : IProductMapper
+    public class TourPackageMapper : IProductMapper<TourPackage, TourPackageDto>
     {
-        public static ProductDto FromDomain(Product product)
+        public static TourPackageDto FromDomain(Product product)
         {
             if (product is not TourPackage tourPackage)
                 throw new ArgumentException("Product must be of type TourPackage", nameof(product));
@@ -15,7 +16,7 @@ namespace Core.Application.Mappings
                 externalId: tourPackage.ExternalId,
                 name: tourPackage.Name,
                 price: tourPackage.Price,
-                description: tourPackage.Description??string.Empty,
+                description: tourPackage.Description ?? string.Empty,
                 category: tourPackage.Category,
                 provider: tourPackage.Provider,
                 imageUrl: tourPackage.Images?.FirstOrDefault() ?? string.Empty,
@@ -64,16 +65,16 @@ namespace Core.Application.Mappings
                         }
                     },
                 cancellationPolicy: tourPackage.CancellationPolicy is null
-                    ? new TourPackageDto.CancellationPolicyInfo { FreeCancellation = false, Deadline = string.Empty, Penalty = string.Empty }
-                    : new TourPackageDto.CancellationPolicyInfo
+                    ? new CancellationPolicyInfo { FreeCancellation = false, Deadline = string.Empty, Penalty = string.Empty }
+                    : new CancellationPolicyInfo
                     {
                         FreeCancellation = tourPackage.CancellationPolicy.FreeCancellation,
                         Deadline = tourPackage.CancellationPolicy.Deadline ?? string.Empty,
                         Penalty = tourPackage.CancellationPolicy.Penalty ?? string.Empty
                     },
                 availability: tourPackage.Availability is null
-                    ? new TourPackageDto.AvailabilityInfo { Status = string.Empty, RemainingSlots = 0 }
-                    : new TourPackageDto.AvailabilityInfo
+                    ? new AvailabilityInfo { Status = string.Empty, RemainingSlots = 0 }
+                    : new AvailabilityInfo
                     {
                         Status = tourPackage.Availability.Status ?? string.Empty,
                         RemainingSlots = tourPackage.Availability.RemainingSlots
@@ -84,7 +85,7 @@ namespace Core.Application.Mappings
             );
         }
 
-        public static  Product ToDomain(ProductDto productDto)
+        public static TourPackage ToDomain(ProductDto productDto)
         {
             if (productDto is not TourPackageDto tourPackageDto)
                 throw new ArgumentException("ProductDto must be of type TourPackageDto", nameof(productDto));
@@ -137,8 +138,8 @@ namespace Core.Application.Mappings
                 : new CancellationPolicyInfo
                 {
                     FreeCancellation = tourPackageDto.CancellationPolicy.FreeCancellation,
-                    Deadline = tourPackageDto.CancellationPolicy.Deadline,
-                    Penalty = tourPackageDto.CancellationPolicy.Penalty
+                    Deadline = tourPackageDto.CancellationPolicy.Deadline ?? string.Empty,
+                    Penalty = tourPackageDto.CancellationPolicy.Penalty ?? string.Empty
                 };
 
             var availability = tourPackageDto.Availability is null
@@ -151,6 +152,7 @@ namespace Core.Application.Mappings
 
             var tourPackage = new TourPackage(
                 externalId: tourPackageDto.ExternalId,
+                provider: tourPackageDto.Provider,
                 name: tourPackageDto.Name,
                 price: tourPackageDto.Price,
                 description: tourPackageDto.Description,

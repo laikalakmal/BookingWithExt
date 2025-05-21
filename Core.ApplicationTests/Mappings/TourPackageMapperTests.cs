@@ -1,12 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Core.Application.Mappings;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Core.Application.DTOs;
 using Core.Domain.Entities;
-using Core.Application.DTOs;
 
 namespace Core.Application.Mappings.Tests
 {
@@ -18,17 +11,18 @@ namespace Core.Application.Mappings.Tests
         {
             // Arrange
             var domain = new TourPackage(
-                
+
                 externalId: "PKG12345",
+                provider: "booking.com",
                 name: "Luxury Maldives Getaway",
                 price: Price.Create(2999.99m, "USD"),
                 description: "7-day all-inclusive resort stay with private beach access",
                 destination: new DestinationInfo
-                 {
-                     Country = "Maldives",
-                     City = "North Malé Atoll",
-                     Resort = "Paradise Island Resort"
-                 },
+                {
+                    Country = "Maldives",
+                    City = "North Malé Atoll",
+                    Resort = "Paradise Island Resort"
+                },
                 duration: new DurationInfo
                 {
                     Days = 7,
@@ -83,13 +77,13 @@ namespace Core.Application.Mappings.Tests
                         Included = true
                     }
                 },
-                cancellationPolicy: new CancellationPolicyInfo
+                cancellationPolicy: new Domain.Entities.SupportClasses.CancellationPolicyInfo
                 {
                     FreeCancellation = true,
                     Deadline = "14 days before departure",
                     Penalty = "Full payment if cancelled within 7 days"
                 },
-                availability: new AvailabilityInfo
+                availability: new Domain.Entities.SupportClasses.AvailabilityInfo
                 {
                     Status = "Available",
                     RemainingSlots = 8
@@ -191,7 +185,7 @@ namespace Core.Application.Mappings.Tests
                 id: Guid.NewGuid(),
                 externalId: "PKG12345",
                 name: "Luxury Maldives Getaway",
-                price: Price.Create(2999.99m,"USD"),
+                price: Price.Create(2999.99m, "USD"),
                 description: "7-day all-inclusive resort stay with private beach access",
                 category: Domain.Enums.ProductCategory.TourPackage,
                 provider: "booking.com",
@@ -258,13 +252,13 @@ namespace Core.Application.Mappings.Tests
                         Included = true
                     }
                 },
-                cancellationPolicy: new Core.Application.DTOs.TourPackageDto.CancellationPolicyInfo
+                cancellationPolicy: new Domain.Entities.SupportClasses.CancellationPolicyInfo
                 {
                     FreeCancellation = true,
                     Deadline = "14 days before departure",
                     Penalty = "Full payment if cancelled within 7 days"
                 },
-                availability: new Core.Application.DTOs.TourPackageDto.AvailabilityInfo
+                availability: new Domain.Entities.SupportClasses.AvailabilityInfo
                 {
                     Status = "Available",
                     RemainingSlots = 8
@@ -285,7 +279,7 @@ namespace Core.Application.Mappings.Tests
             // Assert
             Assert.IsNotNull(domain);
             Assert.AreSame(domain.GetType(), typeof(Core.Domain.Entities.TourPackage));
-            
+
             Assert.AreEqual("PKG12345", domain.ExternalId);
             Assert.AreEqual("Luxury Maldives Getaway", domain.Name);
             Assert.AreEqual("Maldives", domain.Destination.Country);

@@ -1,9 +1,4 @@
 ﻿using Core.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Application.DTOs
 {
@@ -16,12 +11,12 @@ namespace Core.Application.DTOs
         public string Description { get; set; }
         public ProductCategory Category { get; set; }
         public string Provider { get; set; }
-        
+
         public string ImageUrl { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-        
+
 
         public ProductDto(
             Guid id,

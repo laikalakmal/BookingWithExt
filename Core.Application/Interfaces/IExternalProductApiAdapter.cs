@@ -1,5 +1,4 @@
 ﻿using Core.Application.DTOs;
-using Core.Domain.Entities;
 
 namespace Core.Application.Interfaces
 {

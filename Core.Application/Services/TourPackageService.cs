@@ -1,0 +1,85 @@
+﻿using Core.Application.DTOs;
+using Core.Application.Interfaces;
+using Core.Application.Mappings;
+using Core.Domain.Entities;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Core.Application.Services
+{
+    public class TourPackageService : IProductService<TourPackage, TourPackageDto>
+    {
+        private readonly IProductRepository<TourPackage> _repository;
+        private readonly IExternalProductApiAdapter _adapter;
+
+        public TourPackageService(
+            [FromKeyedServices("tour")] IProductRepository<TourPackage> repository,
+            [FromKeyedServices("tour")] IExternalProductApiAdapter externalProductApiAdapter)
+        {
+            _adapter = externalProductApiAdapter;
+            _repository = repository;
+        }
+
+        public async Task<IEnumerable<TourPackageDto>> GetProductsAsync()
+        {
+            // Get local products from database
+            var localProducts = await _repository.GetProductsAsync();
+            // Map to dto
+            return localProducts.OfType<TourPackage>().Select(MapToDto).ToList();
+        }
+
+        public async Task<IEnumerable<TourPackage>> FetchExternalProductsAsync()
+        {
+            var allExternalProducts = new List<TourPackage>();
+
+            try
+            {
+                // Fetch and map external products to domain models
+                var products = await _adapter.FetchProductsAsync();
+                allExternalProducts.AddRange(products.OfType<TourPackageDto>().Select(MapToDomain));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to fetch from {_adapter.GetType().Name}: {ex.Message}");
+            }
+
+            return allExternalProducts;
+        }
+
+        public async Task<int> SyncProductsFromExternalAsync()
+        {
+
+            var localProducts = await _repository.GetProductsAsync();
+
+
+            var externalProducts = await FetchExternalProductsAsync();
+
+            // Identify products to add or update in the database
+            var productsToSync = externalProducts
+                .Where(ext => !localProducts.OfType<TourPackage>().Any(local =>
+                    local.ExternalId == ext.ExternalId))
+                .ToList();
+            //to-do : add update logic
+
+            // Persist new or updated external products to database
+            if (productsToSync.Any())
+            {
+                await _repository.AddProductsAsync(productsToSync);
+            }
+
+            // Return count of synced products
+            return productsToSync.Count;
+        }
+
+
+
+        public TourPackageDto MapToDto(TourPackage product)
+        {
+            return TourPackageMapper.FromDomain(product);
+        }
+
+        public TourPackage MapToDomain(TourPackageDto dto)
+        {
+            return TourPackageMapper.ToDomain(dto);
+        }
+    }
+}
