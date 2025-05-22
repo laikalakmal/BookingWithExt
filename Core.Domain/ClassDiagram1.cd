@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Core.Domain.Entities.SupportClasses.AvailabilityInfo" Collapsed="true">
+    <Position X="11" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\SupportClasses\AvailabilityInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Core.Domain.Entities.SupportClasses.CancellationPolicyInfo" Collapsed="true">
+    <Position X="12.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAABAAA=</HashCode>
+      <FileName>Entities\SupportClasses\CancellationPolicyInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Core.Domain.Entities.SupportClasses.Coordinates" Collapsed="true">
+    <Position X="14.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\SupportClasses\Coordinates.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Core.Domain.Entities.SupportClasses.SpecialOffer" Collapsed="true">
+    <Position X="9.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAEAAAAAAgAAAAAIAgAAQACAAAAAAAIgAAAAAAAAA=</HashCode>
+      <FileName>Entities\SupportClasses\SpecialOffer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Core.Domain.Entities.HolidayPackage" Collapsed="true">
+    <Position X="4.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAwAAAAAAAAAAAGAAAAAABABAAAAAQAAAAA=</HashCode>
+      <FileName>Entities\HolidayPackage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Core.Domain.Entities.Product" Collapsed="true">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAQAkCAAAACAAAAQAAAAAAAIAAAAAAAAACAA=</HashCode>
+      <FileName>Entities\Product.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Core.Domain.Entities.TourPackage" Collapsed="true">
+    <Position X="6.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAhAAAAACAAAAAAABAAGABAAAABAFAABAAAAAAAQ=</HashCode>
+      <FileName>Entities\TourPackage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Core.Domain.Entities.DestinationInfo" Collapsed="true">
+    <Position X="9.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAIAAAAAAAAAAIAAAAAAAAAAAAABAA=</HashCode>
+      <FileName>Entities\TourPackage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Core.Domain.Entities.DurationInfo" Collapsed="true">
+    <Position X="11" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Entities\TourPackage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Core.Domain.Entities.AccommodationInfo" Collapsed="true">
+    <Position X="9.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAAAAAAAAAAAAAAAAAAAEAAQAAAAAAAAA=</HashCode>
+      <FileName>Entities\TourPackage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Core.Domain.Entities.TransportationInfo" Collapsed="true">
+    <Position X="12.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>Entities\TourPackage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Core.Domain.Entities.FlightInfo" Collapsed="true">
+    <Position X="12.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAAAAIAAgAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\TourPackage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Core.Domain.Entities.TransferInfo" Collapsed="true">
+    <Position X="11" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Entities\TourPackage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Price" Collapsed="true">
+    <Position X="14.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEQAAAAACACAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>ValueObjects\Price.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="Core.Domain.Enums.Currency" Collapsed="true">
+    <Position X="9.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAEAAgAAABAAAESEAAAAAAIAAAAAAAEg=</HashCode>
+      <FileName>Enums\Currency.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Core.Domain.Enums.ProductCategory" Collapsed="true">
+    <Position X="11" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>Enums\ProductCategory.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Core.Application.Common.Models.ApiResponse&lt;T&gt;" Collapsed="true">
+    <Position X="7.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAAAAAAAAAAAgAAABAAAAEAIAAAAAA=</HashCode>
+      <FileName>Common\Models\ApiResponse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Core.Application.DTOs.HolidayPackageDto" Collapsed="true">
+    <Position X="3" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAwAAAAAAAAAAAGAAAAAABABAAAAAQAAAAA=</HashCode>
+      <FileName>DTOs\HolidayPackageDto.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Core.Application.DTOs.ProductDto" Collapsed="true">
+    <Position X="4.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACQAAAAQAkCAAAACAAAAQAAAAAAAIAAAAAAAAACAA=</HashCode>
+      <FileName>DTOs\ProductDto.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Core.Application.DTOs.TourPackageDto" Collapsed="true">
+    <Position X="5.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAhAAAAACAAAAAAABAAGABAAAABAFAABAAAAAAAQ=</HashCode>
+      <FileName>DTOs\TourPackageDto.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Core.Application.Features.Products.Commands.SyncProducts.SyncProductsCommand" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Features\Products\Commands\SyncProducts\SyncProductsCommand.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Core.Application.Features.Products.Commands.SyncProducts.SyncProductsResponse" Collapsed="true">
+    <Position X="13" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAABAAAAAAAAIAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Features\Products\Commands\SyncProducts\SyncProductsCommand.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Core.Application.Features.Products.Commands.SyncProducts.SyncProductsCommandHandler" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAIAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
+      <FileName>Features\Products\Commands\SyncProducts\SyncProductsCommandHandler.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Core.Application.Features.Products.Queries.GetAllProducts.GetProductsQuery" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="13" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Features\Products\Queries\GetAllProducts\GetProductsQuery.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Core.Application.Features.Products.Queries.GetAllProducts.GetProductsQueryHandler" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="7.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAE=</HashCode>
+      <FileName>Features\Products\Queries\GetAllProducts\GetProductsQueryHandler.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Core.Application.Features.Products.Queries.GetHolidayPackages.GetHolidayPackagesQuery" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Features\Products\Queries\GetHolidayPackages\GetHolidayPackagesQuery.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Core.Application.Features.Products.Queries.GetHolidayPackages.GetHolidayPackagesQueryHandler" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
+      <FileName>Features\Products\Queries\GetHolidayPackages\GetHolidayPackagesQueryHandler.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Core.Application.Features.Products.Queries.GetTourPackages.GetTourPackagesQuery" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Features\Products\Queries\GetTourPackages\GetTourPackagesQuery.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Core.Application.Features.Products.Queries.GetTourPackages.GetTourPackagesQueryHandler" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
+      <FileName>Features\Products\Queries\GetTourPackages\GetTourPackagesQueryHandler.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Core.Application.Mappings.HolidayPackageMapper" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="13" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Mappings\HolidayPackageMapper.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Core.Application.Mappings.TourPackageMapper" BaseTypeListCollapsed="true">
+    <Position X="7.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Mappings\TourPackageMapper.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.19" Collapsed="true" />
+  </Class>
+  <Class Name="Core.Application.Services.HolidayPackageService" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="7.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAQAAEBAAAAAAAAAAAAACAAAAAAAEAAAAAAAABA=</HashCode>
+      <FileName>Services\HolidayPackageService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Core.Application.Services.TourPackageService" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAQAAEBAAAAAAAAAAAAACAAAAAAAEAAAAAAAABA=</HashCode>
+      <FileName>Services\TourPackageService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Interface Name="Core.Application.Interfaces.IExternalProductApiAdapter" Collapsed="true">
+    <Position X="4.5" Y="4.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IExternalProductApiAdapter.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Core.Application.Interfaces.IProductRepository&lt;T&gt;" Collapsed="true">
+    <Position X="11.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IProductRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Core.Application.Interfaces.IProductService&lt;TDomain, TDto&gt;" Collapsed="true">
+    <Position X="13" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAQAAEAAAAAAAAAAAAAACAAAAAAAEAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IProductService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Core.Application.Mappings.IProductMapper&lt;TDomain, TDto&gt;">
+    <Position X="9.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Mappings\IProductMapper.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

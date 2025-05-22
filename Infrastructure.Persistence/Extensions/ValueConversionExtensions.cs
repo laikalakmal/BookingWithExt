@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace Infrastructure.Persistence.Extensions
 {
-    // Helper extension method
+    // Helper extension method for Entity Framework Core to handle JSON conversion for properties
     internal static class ValueConversionExtensions
     {
         public static PropertyBuilder<T> HasJsonConversion<T>(this PropertyBuilder<T> propertyBuilder)

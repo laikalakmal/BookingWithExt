@@ -15,27 +15,39 @@ namespace Infrastructure.Persistence.Repositories
 
         public async Task AddProductsAsync(List<HolidayPackage> allProducts)
         {
-            // Pattern matching with is-expression to collect HolidayPackage instances
-            // This processes in one pass without creating multiple collections
-            if (allProducts?.Any() != true)
-                return;
-
-            var entities = allProducts
-                .Where(p => p is HolidayPackage)
-                .Cast<HolidayPackage>();
-
-            // Using AddRange is more efficient than multiple Add calls when possible
-            if (entities.Any())
+            try
             {
-                _context.HolidayPackages.AddRange(entities);
-                await _context.SaveChangesAsync();
+                if (allProducts?.Any() != true)
+                    return;
+
+                var entities = allProducts
+                    .Where(p => p is HolidayPackage)
+                    .Cast<HolidayPackage>();
+
+                if (entities.Any())
+                {
+                    _context.HolidayPackages.AddRange(entities);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                
+                throw new InvalidOperationException("An error occurred while adding holiday packages.", ex);
             }
         }
 
         public async Task<IEnumerable<HolidayPackage>> GetProductsAsync()
         {
-            // Return holiday packages as products directly from the database
-            return await _context.HolidayPackages.ToListAsync();
+            try
+            {
+                return await _context.HolidayPackages.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                
+                throw new InvalidOperationException("An error occurred while retrieving holiday packages.", ex);
+            }
         }
     }
 }

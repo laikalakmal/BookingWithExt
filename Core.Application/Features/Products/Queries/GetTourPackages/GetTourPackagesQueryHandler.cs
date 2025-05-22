@@ -17,8 +17,17 @@ namespace Core.Application.Features.Products.Queries.GetTourPackages
 
         public async Task<List<TourPackageDto>> Handle(GetTourPackagesQuery request, CancellationToken cancellationToken)
         {
-            var products = await _tourService.GetProductsAsync();
-            return products.Where(p => p.Category == ProductCategory.TourPackage).ToList();
+            try
+            {
+                var products = await _tourService.GetProductsAsync();
+                return products.Where(p => p.Category == ProductCategory.TourPackage).ToList();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }
+

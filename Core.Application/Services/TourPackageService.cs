@@ -21,10 +21,18 @@ namespace Core.Application.Services
 
         public async Task<IEnumerable<TourPackageDto>> GetProductsAsync()
         {
-            // Get local products from database
-            var localProducts = await _repository.GetProductsAsync();
-            // Map to dto
-            return localProducts.OfType<TourPackage>().Select(MapToDto).ToList();
+            try
+            {
+                // Get local products from database
+                var localProducts = await _repository.GetProductsAsync();
+                // Map to dto
+                return localProducts.OfType<TourPackage>().Select(MapToDto).ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving tour packages: {ex.Message}");
+                return Enumerable.Empty<TourPackageDto>();
+            }
         }
 
         public async Task<IEnumerable<TourPackage>> FetchExternalProductsAsync()
@@ -47,39 +55,58 @@ namespace Core.Application.Services
 
         public async Task<int> SyncProductsFromExternalAsync()
         {
-
-            var localProducts = await _repository.GetProductsAsync();
-
-
-            var externalProducts = await FetchExternalProductsAsync();
-
-            // Identify products to add or update in the database
-            var productsToSync = externalProducts
-                .Where(ext => !localProducts.OfType<TourPackage>().Any(local =>
-                    local.ExternalId == ext.ExternalId))
-                .ToList();
-            //to-do : add update logic
-
-            // Persist new or updated external products to database
-            if (productsToSync.Any())
+            try
             {
-                await _repository.AddProductsAsync(productsToSync);
+                var localProducts = await _repository.GetProductsAsync();
+                var externalProducts = await FetchExternalProductsAsync();
+
+                // Identify products to add or update in the database
+                var productsToSync = externalProducts
+                    .Where(ext => !localProducts.OfType<TourPackage>().Any(local =>
+                        local.ExternalId == ext.ExternalId))
+                    .ToList();
+                //to-do : add update logic
+
+                // Persist new or updated external products to database
+                if (productsToSync.Any())
+                {
+                    await _repository.AddProductsAsync(productsToSync);
+                }
+
+                // Return count of synced products
+                return productsToSync.Count;
             }
-
-            // Return count of synced products
-            return productsToSync.Count;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error syncing products from external source: {ex.Message}");
+                return 0;
+            }
         }
-
-
 
         public TourPackageDto MapToDto(TourPackage product)
         {
-            return TourPackageMapper.FromDomain(product);
+            try
+            {
+                return TourPackageMapper.FromDomain(product);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error mapping tour package to DTO: {ex.Message}");
+                throw;
+            }
         }
 
         public TourPackage MapToDomain(TourPackageDto dto)
         {
-            return TourPackageMapper.ToDomain(dto);
+            try
+            {
+                return TourPackageMapper.ToDomain(dto);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error mapping DTO to tour package: {ex.Message}");
+                throw;
+            }
         }
     }
 }

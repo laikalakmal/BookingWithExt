@@ -15,26 +15,39 @@ namespace Infrastructure.Persistence.Repositories
 
         public async Task AddProductsAsync(List<TourPackage> allProducts)
         {
-
-            if (allProducts?.Any() != true)
-                return;
-
-            var entities = allProducts
-                .Where(p => p is TourPackage)
-                .Cast<TourPackage>();
-
-
-            if (entities.Any())
+            try
             {
-                _context.TourPackages.AddRange(entities);
-                await _context.SaveChangesAsync();
+                if (allProducts?.Any() != true)
+                    return;
+
+                var entities = allProducts
+                    .Where(p => p is TourPackage)
+                    .Cast<TourPackage>();
+
+                if (entities.Any())
+                {
+                    _context.TourPackages.AddRange(entities);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                
+                throw new InvalidOperationException("An error occurred while adding tour packages.", ex);
             }
         }
 
         public async Task<IEnumerable<TourPackage>> GetProductsAsync()
         {
-
-            return await _context.TourPackages.ToListAsync();
+            try
+            {
+                return await _context.TourPackages.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                
+                throw new InvalidOperationException("An error occurred while retrieving tour packages.", ex);
+            }
         }
     }
 }
