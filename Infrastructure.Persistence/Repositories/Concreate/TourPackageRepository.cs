@@ -1,8 +1,9 @@
 ﻿using Core.Application.Interfaces;
 using Core.Domain.Entities;
+using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Persistence.Repositories
+namespace Infrastructure.Persistence.Repositories.Concreate
 {
     public class TourPackageRepository : IProductRepository<TourPackage>
     {
@@ -32,7 +33,7 @@ namespace Infrastructure.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                
+
                 throw new InvalidOperationException("An error occurred while adding tour packages.", ex);
             }
         }
@@ -45,7 +46,7 @@ namespace Infrastructure.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                
+
                 throw new InvalidOperationException("An error occurred while retrieving tour packages.", ex);
             }
         }

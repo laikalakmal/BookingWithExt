@@ -1,7 +1,7 @@
 ﻿using Core.Application.DTOs;
 using Core.Application.Interfaces;
-using Core.Domain.Enums;
 using Core.Domain.Entities.SupportClasses;
+using Core.Domain.Enums;
 
 namespace Infrastructure.Adapters
 {

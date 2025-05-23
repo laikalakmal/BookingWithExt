@@ -4,7 +4,7 @@ using Core.Application.Mappings;
 using Core.Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Core.Application.Services
+namespace Core.Application.Services.Concreate
 {
     public class HolidayPackageService : IProductService<HolidayPackage, HolidayPackageDto>
     {

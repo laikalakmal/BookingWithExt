@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250521095425_UpdateProductPricePrecision")]
+    [Migration("20250522100945_UpdateProductPricePrecision")]
     partial class UpdateProductPricePrecision
     {
         /// <inheritdoc />

@@ -1,7 +1,7 @@
 ﻿using Core.Application.DTOs;
 using Core.Application.Interfaces;
-using Core.Domain.Enums;
 using Core.Domain.Entities.SupportClasses;
+using Core.Domain.Enums;
 
 namespace Infrastructure.Adapters
 {
@@ -106,8 +106,8 @@ namespace Infrastructure.Adapters
                             : new CancellationPolicyInfo
                             {
                                 FreeCancellation = package.CancellationPolicy.FreeCancellation,
-                                Deadline = package.CancellationPolicy.Deadline??string.Empty,
-                                Penalty = package.CancellationPolicy.Penalty??string.Empty
+                                Deadline = package.CancellationPolicy.Deadline ?? string.Empty,
+                                Penalty = package.CancellationPolicy.Penalty ?? string.Empty
                             };
 
                         var firstRoom = package.RoomOptions?.FirstOrDefault();

@@ -25,11 +25,11 @@ namespace Core.Application.Features.Products.Commands.SyncProducts
             {
                 var holidayCount = await _holidayService.SyncProductsFromExternalAsync();
                 response.HolidayCount = holidayCount;
-                
+
             }
             catch (Exception ex)
             {
-                response.errorMessages.Add( "Error syncing holiday products: " + ex.Message);
+                response.errorMessages.Add("Error syncing holiday products: " + ex.Message);
 
             }
 
@@ -46,9 +46,9 @@ namespace Core.Application.Features.Products.Commands.SyncProducts
             }
 
             return response;
-            
-           
-            
+
+
+
         }
     }
 }

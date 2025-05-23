@@ -1,9 +1,7 @@
 ﻿using Core.Application.DTOs;
+using Core.Application.Interfaces;
 using Core.Domain.Entities;
 using Core.Domain.Entities.SupportClasses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Core.Application.Mappings
 {
@@ -106,12 +104,12 @@ namespace Core.Application.Mappings
             }
             catch (ArgumentException)
             {
-                
+
                 throw;
             }
             catch (Exception ex)
             {
-                
+
                 throw new InvalidOperationException($"Failed to map HolidayPackage to DTO: {ex.Message}", ex);
             }
         }
@@ -205,12 +203,12 @@ namespace Core.Application.Mappings
             }
             catch (ArgumentException)
             {
-                
+
                 throw;
             }
             catch (Exception ex)
             {
-                
+
                 throw new InvalidOperationException($"Failed to map DTO to HolidayPackage: {ex.Message}", ex);
             }
         }

@@ -34,7 +34,7 @@ namespace Core.Domain.Entities
             LastUpdated = lastUpdated;
         }
 
-        protected HolidayPackage() // Parameterless constructor for EF Core
+        public HolidayPackage() // Parameterless constructor for EF Core
             : base(string.Empty, string.Empty, Price.Create(0, "USD"), string.Empty, ProductCategory.HolidayPackage, "booking.com")
         {
             Property = new PropertyInfo();

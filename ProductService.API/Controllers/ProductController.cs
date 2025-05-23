@@ -74,6 +74,24 @@ namespace ProductService.API.Controllers
             }
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ProductDto>> GetProductById(Guid id)
+        {
+            try
+            {
+                var product = await _mediator.Send(new GetProductByIdQuery(id));
+                if (product == null)
+                {
+                    return NotFound($"Product with ID {id} not found.");
+                }
+                return Ok(product);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the product.");
+            }
+        }
+
         [HttpGet("holiday-packages")]
         public async Task<ActionResult<IEnumerable<HolidayPackageDto>>> GetHotels()
         {

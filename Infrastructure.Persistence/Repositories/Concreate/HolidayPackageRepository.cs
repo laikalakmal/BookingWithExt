@@ -2,7 +2,7 @@
 using Core.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Persistence.Repositories
+namespace Infrastructure.Persistence.Repositories.Concreate
 {
     public class HolidayPackageRepository : IProductRepository<HolidayPackage>
     {
@@ -32,7 +32,7 @@ namespace Infrastructure.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                
+
                 throw new InvalidOperationException("An error occurred while adding holiday packages.", ex);
             }
         }
@@ -45,7 +45,7 @@ namespace Infrastructure.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                
+
                 throw new InvalidOperationException("An error occurred while retrieving holiday packages.", ex);
             }
         }
