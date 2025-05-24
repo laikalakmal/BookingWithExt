@@ -7,13 +7,13 @@ using Core.Application.Services;
 using Core.Application.Services.Concreate;
 using Core.Application.Services.Factories;
 using Core.Domain.Entities;
-
-using Microsoft.EntityFrameworkCore;
-using Infrastructure.Persistence.Factories;
-using Infrastructure.Persistence;
-using Infrastructure.Persistence.Repositories.Concreate;
+using Core.Domain.Enums;
 using Infrastructure.Adapters;
+using Infrastructure.Persistence;
+using Infrastructure.Persistence.Factories;
 using Infrastructure.Persistence.Repositories;
+using Infrastructure.Persistence.Repositories.Concreate;
+using Microsoft.EntityFrameworkCore;
 // Extension methods for clean service registration by layer
 public static class ServiceCollectionExtensions
 {
@@ -35,12 +35,23 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IProductRepository<TourPackage>, TourPackageRepository>();
         services.AddScoped<IProductRepository<HolidayPackage>, HolidayPackageRepository>();
         
-        // Repository factories
-        services.AddScoped<IProductRepositoryFactory, TourPackageRepositoryFactory>();
-        services.AddScoped<IProductRepositoryFactory, HolidayPackageRepositoryFactory>();
-        
+      
+
         // Generic product repository (depends on repository factories)
         services.AddScoped<IProductRepository<Product>, GenericProductRepository>();
+
+
+        services.AddScoped<IProductRepositoryFactory>(sp =>
+          new ProductRepositoryFactory<TourPackage>(
+        sp.GetRequiredService<AppDbContext>(),
+        ProductCategory.TourPackage,
+        context => new TourPackageRepository(context)));
+
+        services.AddScoped<IProductRepositoryFactory>(sp =>
+            new ProductRepositoryFactory<HolidayPackage>(
+                sp.GetRequiredService<AppDbContext>(),
+                ProductCategory.HolidayPackage,
+                context => new HolidayPackageRepository(context)));
 
         return services;
     }
@@ -60,12 +71,24 @@ public static class ServiceCollectionExtensions
                 sp.GetRequiredKeyedService<IExternalProductApiAdapter>("holiday")
             ));
 
-        // Register service factories
-        services.AddScoped<IProductServiceFactory, TourPackageServiceFactory>();
-        services.AddScoped<IProductServiceFactory, HolidayPackageServiceFactory>();
-        
+      
+
         // Register generic product service (depends on service factories)
         services.AddScoped<IProductService<Product, ProductDto>, GenericProductService>();
+
+        services.AddScoped<IProductServiceFactory>(sp =>
+    new ProductServiceFactory<TourPackage, TourPackageDto>(
+        sp,
+        ProductCategory.TourPackage,
+        "tour",
+        (repo, adapter) => new TourPackageService(repo, adapter)));
+
+        services.AddScoped<IProductServiceFactory>(sp =>
+            new ProductServiceFactory<HolidayPackage, HolidayPackageDto>(
+                sp,
+                ProductCategory.HolidayPackage,
+                "holiday",
+                (repo, adapter) => new HolidayPackageService(repo, adapter)));
 
         // Non-keyed registrations for MediatR
         services.AddScoped(sp =>

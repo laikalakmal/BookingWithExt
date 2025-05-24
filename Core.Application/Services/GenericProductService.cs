@@ -23,44 +23,68 @@ namespace Core.Application.Services
 
         public async Task<IEnumerable<ProductDto>> GetProductsAsync()
         {
-            IEnumerable<Product> products = await _productRepository.GetProductsAsync();
-            List<ProductDto> results = new List<ProductDto>();
-            
-            foreach (var product in products)
+            try
             {
-                IProductServiceFactory factory = GetFactoryForProduct(product);
-                IProductService<Product, ProductDto> service = factory.CreateService();
-                results.Add(service.MapToDto(product));
+                IEnumerable<Product> products = await _productRepository.GetProductsAsync();
+                List<ProductDto> results = new List<ProductDto>();
+
+                foreach (var product in products)
+                {
+                    IProductServiceFactory factory = GetFactoryForProduct(product);
+                    IProductService<Product, ProductDto> service = factory.CreateService();
+                    results.Add(service.MapToDto(product));
+                }
+
+                return results;
             }
-            
-            return results;
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error occured at GenericProductService in method 'GetProductAsync'", ex);
+            }
         }
 
         public async Task<int> SyncProductsFromExternalAsync()
         {
-            int totalSynced = 0;
-            
-            foreach (IProductServiceFactory factory in _serviceFactories)
+            try
             {
-                IProductService<Product, ProductDto> service = factory.CreateService();
-                totalSynced += await service.SyncProductsFromExternalAsync();
+                int totalSynced = 0;
+
+                foreach (IProductServiceFactory factory in _serviceFactories)
+                {
+                    IProductService<Product, ProductDto> service = factory.CreateService();
+                    totalSynced += await service.SyncProductsFromExternalAsync();
+                }
+
+                return totalSynced;
             }
-            
-            return totalSynced;
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error occured at GenericProductService in method 'SyncProductsFromExternalAsync'",ex);
+            }
         }
 
         public async Task<IEnumerable<Product>> FetchExternalProductsAsync()
         {
-            var results = new List<Product>();
-            
-            foreach (var factory in _serviceFactories)
+            try
             {
-                var service = factory.CreateService();
-                var products = await service.FetchExternalProductsAsync();
-                results.AddRange(products);
+                var results = new List<Product>();
+
+                foreach (var factory in _serviceFactories)
+                {
+                    var service = factory.CreateService();
+                    var products = await service.FetchExternalProductsAsync();
+                    results.AddRange(products);
+                }
+
+                return results;
             }
-            
-            return results;
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error occured at GenericProductService in method 'FetchExternalProductsAsync' ", ex);
+            }
         }
 
         public ProductDto MapToDto(Product product)

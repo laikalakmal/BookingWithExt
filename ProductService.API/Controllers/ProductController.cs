@@ -86,9 +86,9 @@ namespace ProductService.API.Controllers
                 }
                 return Ok(product);
             }
-            catch
+            catch(Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the product.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the product."+ex.Message);
             }
         }
 

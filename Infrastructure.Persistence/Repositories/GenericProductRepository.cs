@@ -29,40 +29,56 @@ namespace Infrastructure.Persistence.Repositories
 
         public async Task<IEnumerable<Product>> GetProductsAsync()
         {
-            var results = new List<Product>();
-            
-            foreach (var factory in _repositoryFactories)
+            try
             {
-                var repo = factory.CreateRepository();
-                var products = await repo.GetProductsAsync();
-                results.AddRange(products);
+                var results = new List<Product>();
+
+                foreach (var factory in _repositoryFactories)
+                {
+                    var repo = factory.CreateRepository();
+                    var products = await repo.GetProductsAsync();
+                    results.AddRange(products);
+                }
+
+                return results;
             }
-            
-            return results;
+            catch (Exception)
+            {
+                throw;
+                
+            }
         }
 
         private Dictionary<IProductRepository<Product>, List<Product>> GroupProductsByRepository(List<Product> products)
         {
-            var result = new Dictionary<IProductRepository<Product>, List<Product>>();
-            
-            foreach (var product in products)
+            try
             {
-                var factory = _repositoryFactories.FirstOrDefault(f => f.CanHandle(product));
-                
-                if (factory == null)
-                    throw new InvalidOperationException($"No repository found for product category {product.Category}.");
-                
-                var repo = factory.CreateRepository();
-                
-                if (!result.ContainsKey(repo))
+                var result = new Dictionary<IProductRepository<Product>, List<Product>>();
+
+                foreach (var product in products)
                 {
-                    result[repo] = new List<Product>();
+                    var factory = _repositoryFactories.FirstOrDefault(f => f.CanHandle(product));
+
+                    if (factory == null)
+                        throw new InvalidOperationException($"No repository found for product category {product.Category}.");
+
+                    var repo = factory.CreateRepository();
+
+                    if (!result.ContainsKey(repo))
+                    {
+                        result[repo] = new List<Product>();
+                    }
+
+                    result[repo].Add(product);
                 }
-                
-                result[repo].Add(product);
+
+                return result;
             }
-            
-            return result;
+            catch (Exception ex)
+            {
+
+                throw new Exception(" Error at Repository factory",ex);
+            }
         }
     }
 }
