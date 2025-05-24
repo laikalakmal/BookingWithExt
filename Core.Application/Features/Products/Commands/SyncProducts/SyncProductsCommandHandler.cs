@@ -20,14 +20,35 @@ namespace Core.Application.Features.Products.Commands.SyncProducts
 
         public async Task<SyncProductsResponse> Handle(SyncProductsCommand request, CancellationToken cancellationToken)
         {
-            var holidayCount = await _holidayService.SyncProductsFromExternalAsync();
-            var tourCount = await _tourService.SyncProductsFromExternalAsync();
-
-            return new SyncProductsResponse
+            var response = new SyncProductsResponse();
+            try
             {
-                HolidayCount = holidayCount,
-                TourCount = tourCount
-            };
+                var holidayCount = await _holidayService.SyncProductsFromExternalAsync();
+                response.HolidayCount = holidayCount;
+
+            }
+            catch (Exception ex)
+            {
+                response.errorMessages.Add("Error syncing holiday products: " + ex.Message);
+
+            }
+
+            try
+            {
+                var tourCount = await _tourService.SyncProductsFromExternalAsync();
+                response.TourCount = tourCount;
+
+            }
+            catch (Exception ex)
+            {
+
+                response.errorMessages.Add("Error syncing tour products: " + ex.Message);
+            }
+
+            return response;
+
+
+
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Core.Application.DTOs;
 using Core.Application.Interfaces;
-using Core.Domain.Enums;
 using Core.Domain.Entities.SupportClasses;
+using Core.Domain.Enums;
 
 namespace Infrastructure.Adapters
 {
@@ -11,139 +11,147 @@ namespace Infrastructure.Adapters
         {
             var apiUrl = "https://9fa670d1-1dd5-4cf6-819b-46fff26ce06f.mock.pstmn.io/hotels";
             var apiKey = "your-api-key";
-            using var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Add("x-api-key", apiKey);
-
-            var response = await httpClient.GetAsync(apiUrl);
-            response.EnsureSuccessStatusCode();
-
-            var json = await response.Content.ReadAsStringAsync();
-
-            //define DTO for deserialization
-            var options = new System.Text.Json.JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-            var apiPackages = System.Text.Json.JsonSerializer.Deserialize<List<ApiHolidayPackage>>(json, options);
-
-            //Map to HolidayPackageDto
             var result = new List<ProductDto>();
-            if (apiPackages != null)
+
+            try
             {
-                foreach (var package in apiPackages)
+                using var httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Add("x-api-key", apiKey);
+
+                var response = await httpClient.GetAsync(apiUrl);
+                response.EnsureSuccessStatusCode();
+
+                var json = await response.Content.ReadAsStringAsync();
+
+                var options = new System.Text.Json.JsonSerializerOptions
                 {
-                    // Map Property
-                    var property = package.Property is null
-                        ? new HolidayPackageDto.PropertyInfo()
-                        : new HolidayPackageDto.PropertyInfo
-                        {
-                            Id = package.Property.Id,
-                            Name = package.Property.Name,
-                            Rating = package.Property.Rating,
-                            Type = package.Property.Type,
-                            Amenities = package.Property.Amenities ?? new List<string>(),
-                            Location = package.Property.Location is null
-                                ? null
-                                : new HolidayPackageDto.LocationInfo
-                                {
-                                    Country = package.Property.Location.Country,
-                                    Island = package.Property.Location.Island,
-                                    Coordinates = package.Property.Location.Coordinates is null
-                                        ? null
-                                        : new HolidayPackageDto.Coordinates
-                                        {
-                                            Latitude = package.Property.Location.Coordinates.Latitude,
-                                            Longitude = package.Property.Location.Coordinates.Longitude
-                                        },
-                                    TransferTime = package.Property.Location.TransferTime
-                                }
-                        };
+                    PropertyNameCaseInsensitive = true
+                };
+                var apiPackages = System.Text.Json.JsonSerializer.Deserialize<List<ApiHolidayPackage>>(json, options);
 
-                    // Map Room Options
-                    var roomOptions = new List<HolidayPackageDto.RoomOption>();
-                    if (package.RoomOptions != null)
+                if (apiPackages != null)
+                {
+                    foreach (var package in apiPackages)
                     {
-                        foreach (var apiRoom in package.RoomOptions)
-                        {
-                            roomOptions.Add(new HolidayPackageDto.RoomOption
+                        var property = package.Property is null
+                            ? new HolidayPackageDto.PropertyInfo()
+                            : new HolidayPackageDto.PropertyInfo
                             {
-                                RoomType = apiRoom.RoomType,
-                                MaxOccupancy = apiRoom.MaxOccupancy,
-                                Size = apiRoom.Size,
-                                BedType = apiRoom.BedType,
-                                View = apiRoom.View,
-                                Amenities = apiRoom.Amenities ?? new List<string>(),
-                                Price = apiRoom.Price is null
+                                Id = package.Property.Id,
+                                Name = package.Property.Name,
+                                Rating = package.Property.Rating,
+                                Type = package.Property.Type,
+                                Amenities = package.Property.Amenities ?? new List<string>(),
+                                Location = package.Property.Location is null
                                     ? null
-                                    : new HolidayPackageDto.RoomPrice
+                                    : new HolidayPackageDto.LocationInfo
                                     {
-                                        PerNight = apiRoom.Price.PerNight,
-                                        Total = apiRoom.Price.Total,
-                                        Currency = apiRoom.Price.Currency,
-                                        MealPlan = apiRoom.Price.MealPlan
+                                        Country = package.Property.Location.Country,
+                                        Island = package.Property.Location.Island,
+                                        Coordinates = package.Property.Location.Coordinates is null
+                                            ? null
+                                            : new HolidayPackageDto.Coordinates
+                                            {
+                                                Latitude = package.Property.Location.Coordinates.Latitude,
+                                                Longitude = package.Property.Location.Coordinates.Longitude
+                                            },
+                                        TransferTime = package.Property.Location.TransferTime
                                     }
-                            });
-                        }
-                    }
+                            };
 
-                    // Map Special Offers
-                    var specialOffers = new List<HolidayPackageDto.SpecialOffer>();
-                    if (package.SpecialOffers != null)
-                    {
-                        foreach (var apiOffer in package.SpecialOffers)
+                        var roomOptions = new List<HolidayPackageDto.RoomOption>();
+                        if (package.RoomOptions != null)
                         {
-                            specialOffers.Add(new HolidayPackageDto.SpecialOffer
+                            foreach (var apiRoom in package.RoomOptions)
                             {
-                                Name = apiOffer.Name,
-                                Description = apiOffer.Description,
-                                Discount = apiOffer.Discount.HasValue ? (decimal?)apiOffer.Discount.Value : null,
-                                ValidUntil = apiOffer.ValidUntil != null ? DateTime.TryParse(apiOffer.ValidUntil, out var date) ? date : null : null,
-                                RequiresVerification = apiOffer.RequiresVerification
-                            });
+                                roomOptions.Add(new HolidayPackageDto.RoomOption
+                                {
+                                    RoomType = apiRoom.RoomType,
+                                    MaxOccupancy = apiRoom.MaxOccupancy,
+                                    Size = apiRoom.Size,
+                                    BedType = apiRoom.BedType,
+                                    View = apiRoom.View,
+                                    Amenities = apiRoom.Amenities ?? new List<string>(),
+                                    Price = apiRoom.Price is null
+                                        ? null
+                                        : new HolidayPackageDto.RoomPrice
+                                        {
+                                            PerNight = apiRoom.Price.PerNight,
+                                            Total = apiRoom.Price.Total,
+                                            Currency = apiRoom.Price.Currency,
+                                            MealPlan = apiRoom.Price.MealPlan
+                                        }
+                                });
+                            }
                         }
-                    }
 
-                    // Map Cancellation Policy
-                    var cancellationPolicy = package.CancellationPolicy is null
-                        ? new CancellationPolicyInfo { FreeCancellation = false, Deadline = string.Empty, Penalty = string.Empty }
-                        : new CancellationPolicyInfo
+                        var specialOffers = new List<HolidayPackageDto.SpecialOffer>();
+                        if (package.SpecialOffers != null)
                         {
-                            FreeCancellation = package.CancellationPolicy.FreeCancellation,
-                            Deadline = package.CancellationPolicy.Deadline,
-                            Penalty = package.CancellationPolicy.Penalty
-                        };
+                            foreach (var apiOffer in package.SpecialOffers)
+                            {
+                                specialOffers.Add(new HolidayPackageDto.SpecialOffer
+                                {
+                                    Name = apiOffer.Name,
+                                    Description = apiOffer.Description,
+                                    Discount = apiOffer.Discount.HasValue ? (decimal?)apiOffer.Discount.Value : null,
+                                    ValidUntil = apiOffer.ValidUntil != null ? DateTime.TryParse(apiOffer.ValidUntil, out var date) ? date : null : null,
+                                    RequiresVerification = apiOffer.RequiresVerification
+                                });
+                            }
+                        }
 
-                    // Create the price (use first room price if available, otherwise default)
-                    var firstRoom = package.RoomOptions?.FirstOrDefault();
-                    var price = firstRoom?.Price != null
-                        ? Price.Create(
-                            firstRoom.Price.Total,
-                            firstRoom.Price.Currency ?? "USD")
-                        : Price.Create(0m, "USD");
+                        var cancellationPolicy = package.CancellationPolicy is null
+                            ? new CancellationPolicyInfo { FreeCancellation = false, Deadline = string.Empty, Penalty = string.Empty }
+                            : new CancellationPolicyInfo
+                            {
+                                FreeCancellation = package.CancellationPolicy.FreeCancellation,
+                                Deadline = package.CancellationPolicy.Deadline ?? string.Empty,
+                                Penalty = package.CancellationPolicy.Penalty ?? string.Empty
+                            };
 
-                    // Create final DTO
-                    var dto = new HolidayPackageDto(
-                        id: Guid.NewGuid(),
-                        externalId: package.PackageId,
-                        name: package.Name,
-                        price: price,
-                        description: package.Description ?? string.Empty,
-                        category: ProductCategory.HolidayPackage,
-                        provider: "agoda.com",
-                        imageUrl: package.Images?.FirstOrDefault() ?? string.Empty,
-                        createdAt: DateTime.UtcNow,
-                        updatedAt: DateTime.UtcNow,
-                        property: property,
-                        roomOptions: roomOptions,
-                        inclusions: package.Inclusions ?? new List<string>(),
-                        specialOffers: specialOffers,
-                        cancellationPolicy: cancellationPolicy,
-                        images: package.Images ?? new List<string>(),
-                        lastUpdated: DateTime.TryParse(package.LastUpdated, out var lastUpd) ? lastUpd : DateTime.UtcNow
-                    );
+                        var firstRoom = package.RoomOptions?.FirstOrDefault();
+                        var price = firstRoom?.Price != null
+                            ? Price.Create(
+                                firstRoom.Price.Total,
+                                firstRoom.Price.Currency ?? "USD")
+                            : Price.Create(0m, "USD");
 
-                    result.Add(dto);
+                        var dto = new HolidayPackageDto(
+                            id: Guid.NewGuid(),
+                            externalId: package.PackageId,
+                            name: package.Name,
+                            price: price,
+                            description: package.Description ?? string.Empty,
+                            category: ProductCategory.HolidayPackage,
+                            provider: "agoda.com",
+                            imageUrl: package.Images?.FirstOrDefault() ?? string.Empty,
+                            createdAt: DateTime.UtcNow,
+                            updatedAt: DateTime.UtcNow,
+                            property: property,
+                            roomOptions: roomOptions,
+                            inclusions: package.Inclusions ?? new List<string>(),
+                            specialOffers: specialOffers,
+                            cancellationPolicy: cancellationPolicy,
+                            images: package.Images ?? new List<string>(),
+                            lastUpdated: DateTime.TryParse(package.LastUpdated, out var lastUpd) ? lastUpd : DateTime.UtcNow
+                        );
+
+                        result.Add(dto);
+                    }
                 }
+            }
+            catch (HttpRequestException ex)
+            {
+                throw ex.Message.Contains("404") ? new Exception("API endpoint not found.") : new Exception($"Failed to fetch products: {ex.Message}", ex);
+            }
+            catch (System.Text.Json.JsonException ex)
+            {
+                throw new Exception($"Failed to deserialize response: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An unexpected error occurred: {ex.Message}", ex);
             }
 
             return result;

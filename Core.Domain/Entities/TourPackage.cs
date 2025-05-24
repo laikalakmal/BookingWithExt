@@ -45,7 +45,7 @@ namespace Core.Domain.Entities
             LastUpdated = lastUpdated;
         }
 
-        protected TourPackage() // Parameterless constructor for EF Core
+        public TourPackage() // Parameterless constructor for EF Core
             : base(string.Empty, string.Empty, Price.Create(0, "USD"), string.Empty, ProductCategory.TourPackage, "booking.com")
         {
 

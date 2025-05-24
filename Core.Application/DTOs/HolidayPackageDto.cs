@@ -116,6 +116,6 @@ namespace Core.Application.DTOs
             public List<string>? ValidFor { get; set; }
         }
 
-       
+
     }
 }

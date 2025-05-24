@@ -14,6 +14,8 @@ namespace Infrastructure.Persistence
         {
         }
 
+        // when you add a new entity, you need to add it here as well to be able to use it in the database.
+        // Before adding a new entity, make sure to create a configuration class for it in the EntityConfigurations folder.(lakmal@5/22/2025)
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new ProductConfiguration());
