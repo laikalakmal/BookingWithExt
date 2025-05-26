@@ -52,6 +52,10 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("availability")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Products", (string)null);
@@ -98,10 +102,6 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasBaseType("Core.Domain.Entities.Product");
 
                     b.Property<string>("Accommodation")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Availability")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

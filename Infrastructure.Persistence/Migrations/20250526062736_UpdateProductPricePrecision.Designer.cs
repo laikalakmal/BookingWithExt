@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250522100945_UpdateProductPricePrecision")]
+    [Migration("20250526062736_UpdateProductPricePrecision")]
     partial class UpdateProductPricePrecision
     {
         /// <inheritdoc />
@@ -54,6 +54,10 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("availability")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -101,10 +105,6 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasBaseType("Core.Domain.Entities.Product");
 
                     b.Property<string>("Accommodation")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Availability")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

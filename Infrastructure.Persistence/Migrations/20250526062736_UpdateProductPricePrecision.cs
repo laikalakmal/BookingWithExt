@@ -24,7 +24,8 @@ namespace Infrastructure.Persistence.Migrations
                     Category = table.Column<int>(type: "int", nullable: false),
                     Provider = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    availability = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -68,7 +69,6 @@ namespace Infrastructure.Persistence.Migrations
                     Accommodation = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Transportation = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CancellationPolicy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Availability = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Images = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TermsAndConditions = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false)

@@ -339,8 +339,8 @@ namespace Core.Application.Mappings.Tests
             Assert.IsTrue(domain.CancellationPolicy.FreeCancellation);
             Assert.AreEqual("14 days before departure", domain.CancellationPolicy.Deadline);
             Assert.AreEqual("Full payment if cancelled within 7 days", domain.CancellationPolicy.Penalty);
-            Assert.AreEqual("Available", domain.Availability.Status);
-            Assert.AreEqual(8, domain.Availability.RemainingSlots);
+            Assert.AreEqual("Available", domain.availability.Status);
+            Assert.AreEqual(8, domain.availability.RemainingSlots);
             CollectionAssert.AreEqual(
                 new List<string>
                 {

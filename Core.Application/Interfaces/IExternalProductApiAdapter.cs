@@ -11,6 +11,8 @@ namespace Core.Application.Interfaces
     {
         Task<List<ProductDto>> FetchProductsAsync();
 
+        Task<ProductDto?> FetchProductByIdAsync(string externalId);
+
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿
+using Core.Domain.Entities.SupportClasses;
 using Core.Domain.Enums;
 
 namespace Core.Domain.Entities
@@ -11,7 +12,8 @@ namespace Core.Domain.Entities
             Price price,
             string description,
             ProductCategory category,
-            string provider)
+            string provider,
+            AvailabilityInfo availability)
         {
             Id = Guid.NewGuid();
             this.ExternalId = externalId;
@@ -22,6 +24,7 @@ namespace Core.Domain.Entities
             Provider = provider;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
+            this.availability = availability;
         }
 
         public Guid Id { get; set; }
@@ -33,7 +36,7 @@ namespace Core.Domain.Entities
         public ProductCategory Category { get; set; } //defines is it an tour or a hotel or something else
         public string Provider { get; set; } // what is the external provider of the product ex: booking.com
 
-        
+        public AvailabilityInfo availability;
 
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

@@ -16,6 +16,7 @@ namespace Core.Application.Mappings.Tests
                 provider: "agoda.com",
                 name: "Luxury Beachfront Escape - Maldives",
                 price: Price.Create(3250m, "USD"),
+                availability: new AvailabilityInfo("", 0),
                 description: "5-night stay at a 5-star resort with private beach access",
                 property: new HolidayPackage.PropertyInfo
                 {
@@ -254,6 +255,7 @@ namespace Core.Application.Mappings.Tests
                 externalId: "HOTELPKG001",
                 name: "Luxury Beachfront Escape - Maldives",
                 price: Price.Create(3250m, "USD"),
+                availability: new AvailabilityInfo("", 0),
                 description: "5-night stay at a 5-star resort with private beach access",
                 category: Domain.Enums.ProductCategory.HolidayPackage,
                 provider: "booking.com",

@@ -1,6 +1,7 @@
 ﻿using Core.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Infrastructure.Persistence.Extensions;
 
 namespace Infrastructure.Persistence.EntityConfigurations
 {
@@ -16,6 +17,10 @@ namespace Infrastructure.Persistence.EntityConfigurations
                 price.Property(p => p.Amount).HasColumnType("decimal(18,2)");
                 price.Property(p => p.Currency).HasConversion<string>();
             });
+
+            entity.Property(e => e.availability)
+                .HasJsonConversion()
+                .HasColumnType("nvarchar(max)");
         }
     }
 

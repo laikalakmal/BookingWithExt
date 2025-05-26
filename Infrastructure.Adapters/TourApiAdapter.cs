@@ -7,6 +7,11 @@ namespace Infrastructure.Adapters
 {
     public class TourApiAdapter : IExternalProductApiAdapter
     {
+        public Task<ProductDto?> FetchProductByIdAsync(string externalId)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<List<ProductDto>> FetchProductsAsync()
         {
             var apiUrl = "https://cc392dcc-ec4b-491a-a6af-c2e1b7ca4750.mock.pstmn.io/tours";

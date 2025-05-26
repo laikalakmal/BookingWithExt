@@ -24,12 +24,13 @@ namespace Core.Domain.Entities
             string termsAndConditions,
             DateTime lastUpdated
         ) : base(
-                 externalId,
-                 name,
-                 price,
-                 description,
-                 ProductCategory.TourPackage,
-                 provider)
+                externalId: externalId,
+                 name:name,
+                 price:price,
+                 availability: availability,
+                 description:description,
+                 category: ProductCategory.TourPackage,
+                provider: provider)
         {
             Destination = destination;
             Duration = duration;
@@ -39,14 +40,13 @@ namespace Core.Domain.Entities
             Accommodation = accommodation;
             Transportation = transportation;
             CancellationPolicy = cancellationPolicy;
-            Availability = availability;
             Images = images;
             TermsAndConditions = termsAndConditions;
             LastUpdated = lastUpdated;
         }
 
         public TourPackage() // Parameterless constructor for EF Core
-            : base(string.Empty, string.Empty, Price.Create(0, "USD"), string.Empty, ProductCategory.TourPackage, "booking.com")
+            : base(string.Empty, string.Empty, Price.Create(0, "USD"), string.Empty, ProductCategory.TourPackage, "",new AvailabilityInfo("",0))
         {
 
             Inclusions = new List<string>();
@@ -59,7 +59,6 @@ namespace Core.Domain.Entities
             Accommodation = new AccommodationInfo();
             Transportation = new TransportationInfo();
             CancellationPolicy = new CancellationPolicyInfo();
-            Availability = new AvailabilityInfo();
             TermsAndConditions = string.Empty;
             LastUpdated = DateTime.UtcNow;
 
@@ -75,7 +74,6 @@ namespace Core.Domain.Entities
         public AccommodationInfo Accommodation { get; set; }
         public TransportationInfo Transportation { get; set; }
         public CancellationPolicyInfo CancellationPolicy { get; set; }
-        public AvailabilityInfo Availability { get; set; }
         public List<string> Images { get; set; }
         public string TermsAndConditions { get; set; }
         public DateTime LastUpdated { get; set; }

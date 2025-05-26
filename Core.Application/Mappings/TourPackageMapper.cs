@@ -75,12 +75,12 @@ namespace Core.Application.Mappings
                             Deadline = tourPackage.CancellationPolicy.Deadline ?? string.Empty,
                             Penalty = tourPackage.CancellationPolicy.Penalty ?? string.Empty
                         },
-                    availability: tourPackage.Availability is null
-                        ? new AvailabilityInfo { Status = string.Empty, RemainingSlots = 0 }
+                    availability: tourPackage.availability is null
+                        ? new AvailabilityInfo()
                         : new AvailabilityInfo
                         {
-                            Status = tourPackage.Availability.Status ?? string.Empty,
-                            RemainingSlots = tourPackage.Availability.RemainingSlots
+                            Status = tourPackage.availability.Status ?? string.Empty,
+                            RemainingSlots = tourPackage.availability.RemainingSlots
                         },
                     images: tourPackage.Images ?? new List<string>(),
                     termsAndConditions: tourPackage.TermsAndConditions ?? string.Empty,
@@ -195,7 +195,6 @@ namespace Core.Application.Mappings
                     Accommodation = accommodation,
                     Transportation = transportation,
                     CancellationPolicy = cancellationPolicy,
-                    Availability = availability,
                     Images = tourPackageDto.Images ?? [],
                     TermsAndConditions = tourPackageDto.TermsAndConditions ?? string.Empty,
                     LastUpdated = tourPackageDto.LastUpdated

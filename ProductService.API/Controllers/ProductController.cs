@@ -3,6 +3,7 @@ using Core.Application.Features.Products.Commands.SyncProducts;
 using Core.Application.Features.Products.Queries.GetAllProducts;
 using Core.Application.Features.Products.Queries.GetHolidayPackages;
 using Core.Application.Features.Products.Queries.GetTourPackages;
+using Core.Domain.Entities.SupportClasses;
 using Core.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -86,9 +87,9 @@ namespace ProductService.API.Controllers
                 }
                 return Ok(product);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the product."+ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the product." + ex.Message);
             }
         }
 
@@ -125,6 +126,24 @@ namespace ProductService.API.Controllers
             catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving tour packages.");
+            }
+        }
+
+        [HttpGet("{id}/availability")]
+        public async Task<ActionResult<AvailabilityInfo>> GetProductAvailability(Guid id)
+        {
+            try
+            {
+                var product = await _mediator.Send(new GetProductByIdQuery(id));
+                if (product == null)
+                {
+                    return NotFound($"Availability for product with ID {id} not found.");
+                }
+                return Ok(product.Availability);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving product availability.");
             }
         }
     }

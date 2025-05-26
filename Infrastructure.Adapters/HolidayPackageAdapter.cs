@@ -7,6 +7,11 @@ namespace Infrastructure.Adapters
 {
     public class HolidayPackageAdapter : IExternalProductApiAdapter
     {
+        public Task<ProductDto?> FetchProductByIdAsync(string externalId)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<List<ProductDto>> FetchProductsAsync()
         {
             var apiUrl = "https://9fa670d1-1dd5-4cf6-819b-46fff26ce06f.mock.pstmn.io/hotels";
@@ -117,11 +122,16 @@ namespace Infrastructure.Adapters
                                 firstRoom.Price.Currency ?? "USD")
                             : Price.Create(0m, "USD");
 
+                        var availability= package.Availability is null
+                            ? new AvailabilityInfo(string.Empty, 0)
+                            : new AvailabilityInfo(package.Availability.Status ?? string.Empty, package.Availability.RemainingSlots);
+
                         var dto = new HolidayPackageDto(
                             id: Guid.NewGuid(),
                             externalId: package.PackageId,
                             name: package.Name,
                             price: price,
+                            availability: availability, // since availability is not provided in the API response
                             description: package.Description ?? string.Empty,
                             category: ProductCategory.HolidayPackage,
                             provider: "agoda.com",
@@ -166,6 +176,8 @@ namespace Infrastructure.Adapters
             public required string Name { get; set; }
             public string? Description { get; set; }
             public ApiProperty? Property { get; set; }
+
+            public ApiAvailabilityInfo? Availability { get; set; }
             public List<ApiRoomOption>? RoomOptions { get; set; }
             public List<string>? Inclusions { get; set; }
             public List<ApiSpecialOffer>? SpecialOffers { get; set; }
@@ -174,6 +186,12 @@ namespace Infrastructure.Adapters
             public string? LastUpdated { get; set; }
         }
 
+
+        private class ApiAvailabilityInfo
+        {
+            public string? Status { get; set; }
+            public int RemainingSlots { get; set; }
+        }
 
         private class ApiProperty
         {

@@ -8,6 +8,7 @@ namespace Core.Domain.Entities
         public HolidayPackage(
             string externalId,
             string provider,
+            AvailabilityInfo availability,
             string name,
             Price price,
             string description,
@@ -23,7 +24,9 @@ namespace Core.Domain.Entities
                 price,
                 description,
                 ProductCategory.HolidayPackage,
-                provider)
+                provider,
+                availability
+                )
         {
             Property = property;
             RoomOptions = roomOptions;
@@ -35,7 +38,7 @@ namespace Core.Domain.Entities
         }
 
         public HolidayPackage() // Parameterless constructor for EF Core
-            : base(string.Empty, string.Empty, Price.Create(0, "USD"), string.Empty, ProductCategory.HolidayPackage, "booking.com")
+            : base(string.Empty, string.Empty, Price.Create(0, "USD"), string.Empty, ProductCategory.HolidayPackage, "booking.com",availability: new AvailabilityInfo("",0))
         {
             Property = new PropertyInfo();
             RoomOptions = new List<RoomOption>();
