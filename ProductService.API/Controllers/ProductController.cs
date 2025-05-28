@@ -1,5 +1,6 @@
 ﻿using Core.Application.DTOs;
 using Core.Application.Features.Products.Commands.SyncProducts;
+using Core.Application.Features.Products.Queries.Availability;
 using Core.Application.Features.Products.Queries.GetAllProducts;
 using Core.Application.Features.Products.Queries.GetHolidayPackages;
 using Core.Application.Features.Products.Queries.GetTourPackages;
@@ -134,12 +135,12 @@ namespace ProductService.API.Controllers
         {
             try
             {
-                var product = await _mediator.Send(new GetProductByIdQuery(id));
-                if (product == null)
+                var availabilityResult = await _mediator.Send(new CheckAvailabilityQuery(id));
+                if (availabilityResult == null)
                 {
                     return NotFound($"Availability for product with ID {id} not found.");
                 }
-                return Ok(product.Availability);
+                return Ok(availabilityResult);
             }
             catch
             {

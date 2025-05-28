@@ -123,8 +123,8 @@ namespace Infrastructure.Adapters
                             : Price.Create(0m, "USD");
 
                         var availability= package.Availability is null
-                            ? new AvailabilityInfo(string.Empty, 0)
-                            : new AvailabilityInfo(package.Availability.Status ?? string.Empty, package.Availability.RemainingSlots);
+                            ? new AvailabilityInfo("contact us", 0) { IsAvailable = true }
+                            : new AvailabilityInfo(package.Availability.Status ?? "contact us", package.Availability.RemainingSlots) { IsAvailable=true};
 
                         var dto = new HolidayPackageDto(
                             id: Guid.NewGuid(),
