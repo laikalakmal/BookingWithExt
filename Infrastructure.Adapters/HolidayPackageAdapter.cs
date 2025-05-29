@@ -7,6 +7,8 @@ namespace Infrastructure.Adapters
 {
     public class HolidayPackageAdapter : IExternalProductApiAdapter
     {
+        public string AdapterName => "agoda.com";
+
         public Task<ProductDto?> FetchProductByIdAsync(string externalId)
         {
             throw new NotImplementedException();
@@ -122,9 +124,9 @@ namespace Infrastructure.Adapters
                                 firstRoom.Price.Currency ?? "USD")
                             : Price.Create(0m, "USD");
 
-                        var availability= package.Availability is null
+                        var availability = package.Availability is null
                             ? new AvailabilityInfo("contact us", 0) { IsAvailable = true }
-                            : new AvailabilityInfo(package.Availability.Status ?? "contact us", package.Availability.RemainingSlots) { IsAvailable=true};
+                            : new AvailabilityInfo(package.Availability.Status ?? "contact us", package.Availability.RemainingSlots) { IsAvailable = true };
 
                         var dto = new HolidayPackageDto(
                             id: Guid.NewGuid(),
@@ -134,7 +136,7 @@ namespace Infrastructure.Adapters
                             availability: availability, // since availability is not provided in the API response
                             description: package.Description ?? string.Empty,
                             category: ProductCategory.HolidayPackage,
-                            provider: "agoda.com",
+                            provider: AdapterName,
                             imageUrl: package.Images?.FirstOrDefault() ?? string.Empty,
                             createdAt: DateTime.UtcNow,
                             updatedAt: DateTime.UtcNow,
@@ -166,6 +168,64 @@ namespace Infrastructure.Adapters
 
             return result;
         }
+
+        public async Task<PurchaseResponseDto> PurchaseProductAsync(ProductDto productDto, int quantity)
+        {
+            // there should be a api call for purchasing a product from external API.
+            //since i'm working with mock api i will temporarly return a mock purchase response.
+            // in real use there should be a api call to purchase and if its data should be passed to the our API endpoint that respoinsible for purchasing product.
+
+            if (quantity <= 0)
+            {
+                throw new ArgumentException("Quantity must be greater than zero.", nameof(quantity));
+            }
+
+            var product = FetchProductByIdAsync(productDto.ExternalId).Result;
+
+            if (product == null)
+            {
+                return new PurchaseResponseDto(productDto.ExternalId)
+                {
+                    IsSuccess = false,
+                    Message = "Product not found",
+                    Provider = AdapterName,
+                };
+            }
+            //check if product is available for purchase
+            if (!product.Availability.IsAvailable)
+            {
+                return new PurchaseResponseDto(productDto.ExternalId)
+                {
+                    IsSuccess = false,
+                    Message = "Product is not available for purchase",
+                    Provider = AdapterName,
+                };
+            }
+
+            // Mocking a purchase response, in real scenario this should be replaced with actual API call to purchase the product.
+
+
+
+            var dto = new PurchaseResponseDto(Guid.NewGuid().ToString(), productDto.ExternalId)
+            {
+                ProductId=productDto.Id,
+                ExternalId = productDto.ExternalId,
+                Quantity = quantity,
+                ConfirmationCode = null,
+                CurrencyCode = "USD",
+                IsSuccess = true,
+                Message = "Your order is confirmed by holidayApi",
+                PurchaseDate = DateTime.Now,
+                TotalAmount = quantity * product.Price.Amount,
+
+                Provider = AdapterName
+            };
+
+            return dto;
+
+        }
+
+
 
 
 

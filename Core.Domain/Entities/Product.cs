@@ -24,7 +24,7 @@ namespace Core.Domain.Entities
             Provider = provider;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
-            this.availability = availability;
+            this.Availability = availability;
         }
 
         public Guid Id { get; set; }
@@ -36,10 +36,10 @@ namespace Core.Domain.Entities
         public ProductCategory Category { get; set; } //defines is it an tour or a hotel or something else
         public string Provider { get; set; } // what is the external provider of the product ex: booking.com
 
-        public AvailabilityInfo availability;
+        
 
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-
+        public AvailabilityInfo Availability { get ; set ; }
     }
 }

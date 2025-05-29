@@ -61,7 +61,7 @@ namespace Core.Application.Services
             catch (Exception ex)
             {
 
-                throw new Exception("Error occured at GenericProductService in method 'SyncProductsFromExternalAsync'",ex);
+                throw new Exception("Error occured at GenericProductService in method 'SyncProductsFromExternalAsync'", ex);
             }
         }
 
@@ -96,12 +96,12 @@ namespace Core.Application.Services
 
         public Product MapToDomain(ProductDto dto)
         {
-            // Instead of creating a Product instance, find factory based on DTO category
+            // find factory based on DTO category
             var factory = FindFactoryByCategory(dto.Category);
-            
+
             if (factory == null)
                 throw new InvalidOperationException($"No service found for product category {dto.Category}.");
-                
+
             var service = factory.CreateService();
             return service.MapToDomain(dto);
         }
@@ -109,21 +109,21 @@ namespace Core.Application.Services
         private IProductServiceFactory GetFactoryForProduct(Product product)
         {
             IProductServiceFactory? factory = _serviceFactories.FirstOrDefault(f => f.CanHandle(product));
-            
+
             if (factory == null)
                 throw new InvalidOperationException($"No service found for product category {product.Category}.");
-                
+
             return factory;
         }
-        
+
         private IProductServiceFactory? FindFactoryByCategory(ProductCategory category)
         {
             // Try to find a factory that can handle this category
             // We'll rely on each factory implementation to check just the category
-            return _serviceFactories.FirstOrDefault(f => 
-                f.GetType().Name.StartsWith(category.ToString()) || 
+            return _serviceFactories.FirstOrDefault(f =>
+                f.GetType().Name.StartsWith(category.ToString()) ||
                 // This is a fallback check to see if any factory advertises itself as handling this category
-                (f is IProductServiceFactory factory && 
+                (f is IProductServiceFactory factory &&
                  factory.CanHandle(GetSampleProductForCategory(category))));
         }
 
@@ -134,14 +134,39 @@ namespace Core.Application.Services
             {
                 case ProductCategory.TourPackage:
                     return new TourPackage();
-                    
+
                 case ProductCategory.HolidayPackage:
                     return new HolidayPackage();
-                    
+
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(category), 
+                    throw new ArgumentOutOfRangeException(nameof(category),
                         $"No concrete product implementation exists for category {category}");
             }
+        }
+
+        public async Task<ProductDto> GetByIdAsync(Guid id)
+        {
+            var product = await _productRepository.GetByIdAsync(id);
+            if (product == null)
+            {
+                throw new KeyNotFoundException($"Product with ID {id} not found.");
+            }
+            var productDto = MapToDto(product);
+            return productDto;
+        }
+
+        public async Task<PurchaseResponseDto> PurchaseProductAsync(ProductDto product, int quantity)
+        {
+            if (product == null)
+                throw new ArgumentNullException(nameof(product));
+            if (quantity <= 0)
+                throw new ArgumentOutOfRangeException(nameof(quantity), "Quantity must be greater than zero.");
+            
+            // Find the appropriate factory for the product
+            var factory = FindFactoryByCategory(product.Category) ?? throw new InvalidOperationException($"No service found for product category {product.Category}.");
+            var service = factory.CreateService();
+            // Delegate the purchase to the specific product service
+            return await service.PurchaseProductAsync(product, quantity);
         }
     }
 }

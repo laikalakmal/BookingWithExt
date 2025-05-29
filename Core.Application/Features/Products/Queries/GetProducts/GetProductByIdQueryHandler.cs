@@ -1,6 +1,5 @@
 ﻿using Core.Application.DTOs;
 using Core.Application.Interfaces;
-using Core.Application.Services;
 using Core.Domain.Entities;
 using MediatR;
 using ProductService.API.Controllers;
@@ -13,7 +12,7 @@ namespace Core.Application.Features.Products.Queries.GetProducts
         private readonly IProductService<Product, ProductDto> _productService;
 
         public GetProductByIdQueryHandler(
-            IProductRepository<Product> productRepository, 
+            IProductRepository<Product> productRepository,
             IProductService<Product, ProductDto> productService)
         {
             _productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository));

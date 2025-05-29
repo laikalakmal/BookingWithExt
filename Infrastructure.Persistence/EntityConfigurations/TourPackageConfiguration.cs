@@ -33,7 +33,7 @@ namespace Infrastructure.Persistence.EntityConfigurations
                 .HasJsonConversion()
                 .HasColumnType("nvarchar(max)");
 
-            
+
 
             entity.Property(e => e.Inclusions)
                 .HasJsonConversion()

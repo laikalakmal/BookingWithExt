@@ -1,4 +1,5 @@
 ﻿using Core.Application.DTOs;
+using Core.Application.Features.Products.Commands.PurchaseProduct;
 using Core.Application.Features.Products.Commands.SyncProducts;
 using Core.Application.Features.Products.Queries.Availability;
 using Core.Application.Features.Products.Queries.GetAllProducts;
@@ -135,6 +136,7 @@ namespace ProductService.API.Controllers
         {
             try
             {
+                //ToDo: add real-time availability check via external api.
                 var availabilityResult = await _mediator.Send(new CheckAvailabilityQuery(id));
                 if (availabilityResult == null)
                 {
@@ -147,5 +149,31 @@ namespace ProductService.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving product availability.");
             }
         }
+
+        [HttpPost("{id}/purchase")]
+        public async Task<IActionResult> PurchaseProduct(Guid id, [FromBody] PurchaseRequest request)
+        {
+            if (request == null)
+            {
+                return BadRequest("Invalid purchase request.");
+            }
+            try
+            {
+
+                PurchaseResponseDto purchaseResponseDto = await _mediator.Send(new PurchaseProductCommand { ProductId = id, Quantity = request.Quantity });
+                return Ok(purchaseResponseDto);
+            }
+            catch(Exception ex)
+            {                
+                    return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing the purchase."+ex.Message);
+            }
+        }
+    }
+
+    public class PurchaseRequest
+    {
+
+        public int Quantity { get; set; }
+        public decimal PriceAtPurchase { get; set; }
     }
 }

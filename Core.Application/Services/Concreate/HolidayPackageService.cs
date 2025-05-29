@@ -104,5 +104,32 @@ namespace Core.Application.Services.Concreate
                 throw new Exception($"Failed to map HolidayPackageDto to domain entity: {ex.Message}", ex);
             }
         }
+
+        public async Task<HolidayPackageDto> GetByIdAsync(Guid id)
+        {
+            var product = await _repository.GetByIdAsync(id);
+            if (product == null)
+            {
+                throw new Exception($"HolidayPackage with ID {id} not found.");
+            }
+            return MapToDto(product);
+        }
+
+        public async Task<PurchaseResponseDto> PurchaseProductAsync(ProductDto product, int quantity)
+        {
+            var response = await _adapter.PurchaseProductAsync(product, quantity);
+
+            if (response.IsSuccess)
+            {
+                var holidayPackage = await _repository.GetByIdAsync(product.Id);
+                if (holidayPackage != null)
+                {
+                    holidayPackage.Availability.RemainingSlots -= quantity;
+                    await _repository.UpdateProduct(holidayPackage);
+                }
+            }
+
+            return response;
+        }
     }
 }

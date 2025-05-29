@@ -20,10 +20,32 @@ namespace Infrastructure.Persistence.Repositories
         public async Task AddProductsAsync(List<Product> products)
         {
             Dictionary<IProductRepository<Product>, List<Product>> productsByRepo = GroupProductsByRepository(products);
-            
+
             foreach (var (repo, productGroup) in productsByRepo)
             {
                 await repo.AddProductsAsync(productGroup);
+            }
+        }
+
+        public async Task<Product> GetByIdAsync(Guid id)
+        {
+            try
+            {
+                foreach (var factory in _repositoryFactories)
+                {
+                    var repo = factory.CreateRepository();
+                    var product = await repo.GetByIdAsync(id);
+                    if (product != null)
+                    {
+                        return product;
+                    }
+                }
+
+                throw new KeyNotFoundException($"No product found with ID {id}");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error retrieving product with ID {id}", ex);
             }
         }
 
@@ -45,8 +67,24 @@ namespace Infrastructure.Persistence.Repositories
             catch (Exception)
             {
                 throw;
-                
+
             }
+        }
+
+        public async Task<bool> UpdateProduct(Product product)
+        {
+            if (product == null)
+                throw new ArgumentNullException(nameof(product));
+
+            var factory = _repositoryFactories.FirstOrDefault(f =>
+                f.CanHandle(product));
+
+            if (factory == null)
+                throw new InvalidOperationException($"No repository found for product category {product.Category}.");
+
+            var repo = factory.CreateRepository();
+
+            return await repo.UpdateProduct(product);
         }
 
         private Dictionary<IProductRepository<Product>, List<Product>> GroupProductsByRepository(List<Product> products)
@@ -77,7 +115,7 @@ namespace Infrastructure.Persistence.Repositories
             catch (Exception ex)
             {
 
-                throw new Exception(" Error at Repository factory",ex);
+                throw new Exception(" Error at Repository factory", ex);
             }
         }
     }

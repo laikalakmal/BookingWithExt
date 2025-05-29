@@ -1,7 +1,7 @@
 ﻿using Core.Domain.Entities;
+using Infrastructure.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Infrastructure.Persistence.Extensions;
 
 namespace Infrastructure.Persistence.EntityConfigurations
 {
@@ -18,9 +18,18 @@ namespace Infrastructure.Persistence.EntityConfigurations
                 price.Property(p => p.Currency).HasConversion<string>();
             });
 
-            entity.Property(e => e.availability)
-                .HasJsonConversion()
-                .HasColumnType("nvarchar(max)");
+            entity.Property(p=>p.Category)
+                .HasConversion<string>()
+                .HasColumnType("nvarchar(50)");
+
+            entity.OwnsOne(p => p.Availability, availability =>
+            {
+                availability.Property(a => a.IsAvailable).HasColumnType("bit");
+                availability.Property(a => a.Status).HasColumnType("nvarchar(max)");
+                availability.Property(a => a.RemainingSlots).HasConversion<int>();
+            });
+
+           
         }
     }
 

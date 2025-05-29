@@ -11,7 +11,10 @@ namespace Core.Application.Interfaces
         Task<int> SyncProductsFromExternalAsync(); /// Syncs products from external sources and returns the total number of products synced.
         Task<IEnumerable<TDomain>> FetchExternalProductsAsync(); /// Fetches products from external sources and returns them as domain entities. this is used in the sync process.
 
+        Task<TDto> GetByIdAsync(Guid id);
+
         TDto MapToDto(TDomain product);
         TDomain MapToDomain(TDto dto);
+        Task<PurchaseResponseDto> PurchaseProductAsync(ProductDto product, int quantity);
     }
 }

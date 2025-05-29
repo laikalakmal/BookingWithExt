@@ -37,6 +37,18 @@ namespace Infrastructure.Persistence.Repositories.Concreate
             }
         }
 
+        public async Task<HolidayPackage> GetByIdAsync(Guid id)
+        {
+            try
+            {
+                return await _context.HolidayPackages.FirstOrDefaultAsync(p => p.Id == id) ?? throw new Exception("Product not found");
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("An error occurred while retrieving the holiday package.", ex);
+            }
+        }
+
         public async Task<IEnumerable<HolidayPackage>> GetProductsAsync()
         {
             try
@@ -47,6 +59,27 @@ namespace Infrastructure.Persistence.Repositories.Concreate
             {
 
                 throw new InvalidOperationException("An error occurred while retrieving holiday packages.", ex);
+            }
+        }
+
+        public async Task<bool> UpdateProduct(HolidayPackage holidayPackage)
+        {
+            try
+            {
+                var existing = await _context.HolidayPackages.FirstOrDefaultAsync(p => p.Id == holidayPackage.Id);
+                if (existing == null)
+                    return false;
+
+                _context.Entry(existing).CurrentValues.SetValues(holidayPackage);
+
+               
+
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("An error occurred while updating the holiday package.", ex);
             }
         }
     }

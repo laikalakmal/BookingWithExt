@@ -16,7 +16,7 @@
         public int RemainingSlots { get; set; }
 
         private bool? _isAvailableOverride = null;
-        
+
         public bool IsAvailable
         {
             get => _isAvailableOverride ?? (Status?.ToLower() != "not available" && RemainingSlots > 0);

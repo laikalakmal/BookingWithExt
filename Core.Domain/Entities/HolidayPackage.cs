@@ -38,7 +38,7 @@ namespace Core.Domain.Entities
         }
 
         public HolidayPackage() // Parameterless constructor for EF Core
-            : base(string.Empty, string.Empty, Price.Create(0, "USD"), string.Empty, ProductCategory.HolidayPackage, "booking.com",availability: new AvailabilityInfo("",0))
+            : base(string.Empty, string.Empty, Price.Create(0, "USD"), string.Empty, ProductCategory.HolidayPackage, "booking.com", availability: new AvailabilityInfo("", 0))
         {
             Property = new PropertyInfo();
             RoomOptions = new List<RoomOption>();

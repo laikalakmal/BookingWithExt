@@ -1,13 +1,5 @@
-﻿using Core.Application.DTOs;
-using Core.Application.Interfaces;
-using Core.Domain.Entities;
-using MediatR;
+﻿using MediatR;
 using ProductService.API.Controllers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Application.Features.Products.Queries.Availability
 {
@@ -28,16 +20,16 @@ namespace Core.Application.Features.Products.Queries.Availability
             {
                 return new CheckAvailabilityResult
                 {
-                    Status="NotFound"
+                    Status = "NotFound"
                 };
             }
-                
+
             return new CheckAvailabilityResult
             {
                 CurrentPrice = product.Price.Amount,
-                Status=product.Availability.Status,
+                Status = product.Availability.Status,
                 IsAvailable = product.Availability.IsAvailable,
-                RemainingSlots= product.Availability.RemainingSlots > 0 ? product.Availability.RemainingSlots : 0
+                RemainingSlots = product.Availability.RemainingSlots > 0 ? product.Availability.RemainingSlots : 0
             };
         }
     }

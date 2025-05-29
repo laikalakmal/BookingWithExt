@@ -12,7 +12,7 @@ namespace Core.Application.Interfaces
         /// Determines if this factory can handle the given product type.
         /// </summary>
         bool CanHandle(Product product);
-        
+
         /// <summary>
         /// Creates the appropriate product service for a product.
         /// </summary>

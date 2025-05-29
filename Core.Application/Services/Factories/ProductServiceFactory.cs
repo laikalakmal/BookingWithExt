@@ -34,15 +34,15 @@ namespace Core.Application.Services.Factories
 
         public IProductService<Product, ProductDto> CreateService()
         {
-            var repository = _serviceProvider.GetKeyedService<IProductRepository<TEntity>>(_keyedServiceName) 
+            IProductRepository<TEntity> repository = _serviceProvider.GetKeyedService<IProductRepository<TEntity>>(_keyedServiceName)
                 ?? throw new InvalidOperationException($"{typeof(TEntity).Name} repository service not found");
-            
+
             var adapter = _serviceProvider.GetKeyedService<IExternalProductApiAdapter>(_keyedServiceName)
                 ?? throw new InvalidOperationException($"{typeof(TEntity).Name} API adapter service not found");
-            
+
             // Create the specific service
-            var service = _serviceFactory(repository, adapter);
-            
+            IProductService<TEntity, TDto> service = _serviceFactory(repository, adapter);
+
             // Wrap it in the adapter
             return new ProductServiceAdapter<TEntity, TDto>(service);
         }

@@ -25,10 +25,10 @@ namespace Core.Domain.Entities
             DateTime lastUpdated
         ) : base(
                 externalId: externalId,
-                 name:name,
-                 price:price,
+                 name: name,
+                 price: price,
                  availability: availability,
-                 description:description,
+                 description: description,
                  category: ProductCategory.TourPackage,
                 provider: provider)
         {
@@ -46,7 +46,7 @@ namespace Core.Domain.Entities
         }
 
         public TourPackage() // Parameterless constructor for EF Core
-            : base(string.Empty, string.Empty, Price.Create(0, "USD"), string.Empty, ProductCategory.TourPackage, "",new AvailabilityInfo("",0))
+            : base(string.Empty, string.Empty, Price.Create(0, "USD"), string.Empty, ProductCategory.TourPackage, "", new AvailabilityInfo("", 0))
         {
 
             Inclusions = new List<string>();

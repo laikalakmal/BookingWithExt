@@ -7,9 +7,17 @@ namespace Infrastructure.Adapters
 {
     public class TourApiAdapter : IExternalProductApiAdapter
     {
-        public Task<ProductDto?> FetchProductByIdAsync(string externalId)
+        public string AdapterName => "booking.com";
+
+        public async Task<ProductDto?> FetchProductByIdAsync(string externalId)
         {
-            throw new NotImplementedException();
+
+            //since there is no real api endpoint in my mock server the product is fetched as follows.
+            var products = await FetchProductsAsync();
+            return products.Find(p => p.ExternalId == externalId);
+
+
+
         }
 
         public async Task<List<ProductDto>> FetchProductsAsync()
@@ -32,7 +40,7 @@ namespace Infrastructure.Adapters
             var apiPackages = System.Text.Json.JsonSerializer.Deserialize<List<ApiTourPackage>>(json, options);
 
             // Map to TourPackageDto
-            var result = new List<ProductDto>();
+            List<ProductDto> result = new List<ProductDto>();
             if (apiPackages != null)
             {
                 foreach (var package in apiPackages)
@@ -110,7 +118,7 @@ namespace Infrastructure.Adapters
                         price: price,
                         description: package.Description ?? string.Empty,
                         category: ProductCategory.TourPackage,
-                        provider: "booking.com",
+                        provider: AdapterName,
                         imageUrl: package.Images?.FirstOrDefault() ?? string.Empty,
                         createdAt: DateTime.UtcNow,
                         updatedAt: DateTime.UtcNow,
@@ -134,6 +142,69 @@ namespace Infrastructure.Adapters
 
             return result;
         }
+
+
+
+        public async  Task<PurchaseResponseDto> PurchaseProductAsync(ProductDto productDto, int quantity)
+        {
+            // there should be a api call for purchasing a product from external API.
+            //since i'm working with mock api i will temporarly return a mock purchase response.
+            // in real use there should be a api call to purchase and if its data should be passed to the our API endpoint that respoinsible for purchasing product.
+
+            if (quantity <= 0)
+            {
+                throw new ArgumentException("Quantity must be greater than zero.", nameof(quantity));
+            }
+
+            var product = FetchProductByIdAsync(productDto.ExternalId).Result;
+            
+
+            if (product == null)
+            {
+                return new PurchaseResponseDto(productDto.ExternalId)
+                {
+                    IsSuccess = false,
+                    Message = "Product not found",
+                    Provider = AdapterName,
+                };
+            }
+            //check if product is available for purchase
+            if (!product.Availability.IsAvailable||product.Availability.RemainingSlots<quantity)
+            {
+                
+
+                return new PurchaseResponseDto(productDto.ExternalId)
+                {
+                    IsSuccess = false,
+                    Message = "Product is not available for purchase",
+                    Provider = AdapterName,
+                };
+            }
+
+            // Mocking a purchase response, in real scenario this should be replaced with actual API call to purchase the product.
+
+
+            
+
+            var dto = new PurchaseResponseDto(Guid.NewGuid().ToString(), productDto.ExternalId)
+            {
+                ProductId=product.Id,
+                ExternalId = product.ExternalId,
+                Quantity = quantity,
+                ConfirmationCode = null,
+                CurrencyCode = "USD",
+                IsSuccess = true,
+                Message = "Your order is confirmed by holidayApi",
+                PurchaseDate = DateTime.Now,
+                TotalAmount = quantity * product.Price.Amount,
+                Provider = AdapterName
+            };
+
+            return dto;
+
+        }
+
+
 
 
 

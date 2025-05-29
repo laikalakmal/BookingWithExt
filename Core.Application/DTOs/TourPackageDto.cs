@@ -13,7 +13,7 @@ namespace Core.Application.DTOs
         public AccommodationInfo Accommodation { get; set; }
         public TransportationInfo Transportation { get; set; }
         public CancellationPolicyInfo CancellationPolicy { get; set; }
-       
+
         public List<string> Images { get; set; }
         public string TermsAndConditions { get; set; }
         public DateTime LastUpdated { get; set; }
