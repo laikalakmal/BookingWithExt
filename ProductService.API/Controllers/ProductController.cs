@@ -1,4 +1,5 @@
 ﻿using Core.Application.DTOs;
+using Core.Application.Features.Products.Commands.AddProduct;
 using Core.Application.Features.Products.Commands.PurchaseProduct;
 using Core.Application.Features.Products.Commands.SyncProducts;
 using Core.Application.Features.Products.Queries.Availability;
@@ -23,10 +24,6 @@ namespace ProductService.API.Controllers
         {
             _mediator = mediator;
         }
-
-
-
-
 
         [HttpPost("sync")]
         public async Task<IActionResult> SyncProducts()
@@ -159,21 +156,55 @@ namespace ProductService.API.Controllers
             }
             try
             {
-
                 PurchaseResponseDto purchaseResponseDto = await _mediator.Send(new PurchaseProductCommand { ProductId = id, Quantity = request.Quantity });
                 return Ok(purchaseResponseDto);
             }
-            catch(Exception ex)
-            {                
-                    return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing the purchase."+ex.Message);
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing the purchase." +ex);
             }
         }
-    }
 
-    public class PurchaseRequest
-    {
+        [HttpPost("add")]
+        public async Task<ActionResult<Guid>> AddProduct([FromBody] AddProductRequest request)
+        {
+            if (request == null)
+            {
+                return BadRequest("Invalid product data");
+            }
 
-        public int Quantity { get; set; }
-        public decimal PriceAtPurchase { get; set; }
+            try
+            {
+                var newProductId = await _mediator.Send(new AddProductCommand(request));
+                return Ok(newProductId);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while adding the product: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(Guid id)
+        {
+            try
+            {
+                var result = await _mediator.Send(new DeleteProductCommand(id));
+                if (result==true)
+                {
+                    return StatusCode(StatusCodes.Status200OK);
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status404NotFound, $"Product with ID {id} not found.");
+                }
+                 
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, 
+                    $"An error occurred while deleting the product: {ex.Message}");
+            }
+        }
     }
 }

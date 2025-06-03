@@ -4,6 +4,7 @@
     {
         HolidayPackage,
         TourPackage,
+        Custom
 
     }
 }

@@ -9,14 +9,10 @@ namespace Infrastructure.Adapters
     {
         public string AdapterName => "agoda.com";
 
-        public Task<ProductDto?> FetchProductByIdAsync(string externalId)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<List<ProductDto>> FetchProductsAsync()
         {
-            var apiUrl = "https://9fa670d1-1dd5-4cf6-819b-46fff26ce06f.mock.pstmn.io/hotels";
+            // var apiUrl = "https://9fa670d1-1dd5-4cf6-819b-46fff26ce06f.mock.pstmn.io/hotels";
+            var apiUrl = "https://67c6dc0b-2e55-4479-9fa6-af5934f21e03.mock.pstmn.io/holidays";
             var apiKey = "your-api-key";
             var result = new List<ProductDto>();
 
@@ -124,16 +120,17 @@ namespace Infrastructure.Adapters
                                 firstRoom.Price.Currency ?? "USD")
                             : Price.Create(0m, "USD");
 
-                        var availability = package.Availability is null
-                            ? new AvailabilityInfo("contact us", 0) { IsAvailable = true }
-                            : new AvailabilityInfo(package.Availability.Status ?? "contact us", package.Availability.RemainingSlots) { IsAvailable = true };
+                        //var availability = package.Availability is null
+                        //    ? new AvailabilityInfo("contact us", 100) { IsAvailable = true } 
+                        //    : new AvailabilityInfo(package.Availability.Status ?? "contact us", package.Availability.RemainingSlots ) { IsAvailable = true };
+                            var availability = new AvailabilityInfo("contact us", 100) { IsAvailable = true }; // since availability is not provided in the API response, we set a default value
 
                         var dto = new HolidayPackageDto(
                             id: Guid.NewGuid(),
                             externalId: package.PackageId,
                             name: package.Name,
                             price: price,
-                            availability: availability, // since availability is not provided in the API response
+                            availability: availability, 
                             description: package.Description ?? string.Empty,
                             category: ProductCategory.HolidayPackage,
                             provider: AdapterName,
@@ -167,6 +164,25 @@ namespace Infrastructure.Adapters
             }
 
             return result;
+        }
+
+        public  Task<ProductDto?> FetchProductByIdAsync(string externalId)
+        {
+            // this was done like this because the mock API does not support fetching a single product by ID directly.
+            // so we fetch all products and filter them by externalId to mimic the behavior of fetching a single product.
+            var products =  FetchProductsAsync();
+            
+            if(products == null || !products.Result.Any())
+            {
+                return null;
+            }
+            else
+            {
+                var product = products.Result.FirstOrDefault(p => p.ExternalId == externalId);
+                return Task.FromResult(product);
+            }
+
+
         }
 
         public async Task<PurchaseResponseDto> PurchaseProductAsync(ProductDto productDto, int quantity)
@@ -208,7 +224,7 @@ namespace Infrastructure.Adapters
 
             var dto = new PurchaseResponseDto(Guid.NewGuid().ToString(), productDto.ExternalId)
             {
-                ProductId=productDto.Id,
+                ProductId = productDto.Id,
                 ExternalId = productDto.ExternalId,
                 Quantity = quantity,
                 ConfirmationCode = null,

@@ -26,12 +26,9 @@ namespace Core.Application.Features.Products.Queries.GetProducts
                 IEnumerable<Product> products = await _productRepository.GetProductsAsync();
                 Product? product = products.FirstOrDefault(p => p.Id == request.Id);
 
-                if (product == null)
-                {
-                    throw new KeyNotFoundException($"Product with ID {request.Id} not found.");
-                }
-
-                return _productService.MapToDto(product);
+                return product == null
+                    ? throw new KeyNotFoundException($"Product with ID {request.Id} not found.")
+                    : _productService.MapToDto(product);
             }
             catch (Exception)
             {

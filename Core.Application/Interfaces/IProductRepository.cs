@@ -15,6 +15,8 @@ namespace Core.Application.Interfaces
         Task<IEnumerable<T>> GetProductsAsync();
 
         Task<T> GetByIdAsync(Guid id);
-        Task<bool>UpdateProduct(T product);
+        Task<bool> UpdateProduct(T product);
+
+        Task<bool> DeleteProductAsync(Guid id);
     }
 }

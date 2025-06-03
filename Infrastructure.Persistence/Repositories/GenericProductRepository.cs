@@ -27,17 +27,48 @@ namespace Infrastructure.Persistence.Repositories
             }
         }
 
+        public async Task<bool> DeleteProductAsync(Guid id)
+        {
+            foreach (var factory in _repositoryFactories)
+            {
+                try
+                {
+                    var repo = factory.CreateRepository();
+                    var deleted = await repo.DeleteProductAsync(id);
+                    if (deleted)
+                    {
+                        Console.WriteLine("deleted\n "+repo?.ToString()+"\n");
+                        return true;
+                    }
+                }
+                catch (Exception)
+                {
+                    // Continue to next repository if this one fails
+                }
+            }
+
+            return false; // No repository could delete the product
+        }
+
         public async Task<Product> GetByIdAsync(Guid id)
         {
             try
             {
                 foreach (var factory in _repositoryFactories)
                 {
-                    var repo = factory.CreateRepository();
-                    var product = await repo.GetByIdAsync(id);
-                    if (product != null)
+                    try
                     {
-                        return product;
+                        var repo = factory.CreateRepository();
+                        var product = await repo.GetByIdAsync(id);
+                        if (product != null)
+                        {
+                            return product;
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                        // ctninue to the next factory if this one fails
                     }
                 }
 
@@ -45,7 +76,7 @@ namespace Infrastructure.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error retrieving product with ID {id}", ex);
+                throw new Exception($"Error retrieving product with ID {id}: "+ex.Message, ex);
             }
         }
 

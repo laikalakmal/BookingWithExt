@@ -37,6 +37,24 @@ namespace Infrastructure.Persistence.Repositories.Concreate
             }
         }
 
+        public async Task<bool> DeleteProductAsync(Guid id)
+        {
+            try
+            {
+                var product = await _context.TourPackages.FirstOrDefaultAsync(p => p.Id == id);
+                if (product == null)
+                    return await Task.FromResult(false);
+
+                _context.TourPackages.Remove(product);
+                return await _context.SaveChangesAsync().ContinueWith(t => t.Result > 0);
+            }
+            catch (Exception ex)
+            {
+
+                throw new InvalidOperationException("An error occured while deleting tour package", ex);
+            }
+        }
+
         public async Task<TourPackage> GetByIdAsync(Guid id)
         {
             try

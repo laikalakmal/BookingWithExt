@@ -8,18 +8,17 @@ namespace Core.Application.Features.Products.Commands.PurchaseProduct
     public class PurchaseProductCommandHandler : IRequestHandler<PurchaseProductCommand, PurchaseResponseDto>
     {
 
-        
+
         private readonly IProductService<Product, ProductDto> _productService;
 
 
 
         public PurchaseProductCommandHandler(
-            IProductRepository<Product> productRepository,
             IProductService<Product, ProductDto> productService)
 
         {
             _productService = productService ?? throw new ArgumentNullException(nameof(productService));
-            
+
         }
 
         public async Task<PurchaseResponseDto> Handle(PurchaseProductCommand request, CancellationToken cancellationToken)

@@ -131,5 +131,23 @@ namespace Core.Application.Services.Concreate
 
             return response;
         }
+
+        public async Task<bool> DeleteProductAsync(Guid id)
+        {
+            try
+            {
+                var product= await _repository.GetByIdAsync(id);
+                if (product == null)
+                {
+                    throw new KeyNotFoundException($"HolidayPackage with ID {id} not found.");
+                }
+                return await _repository.DeleteProductAsync(id);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

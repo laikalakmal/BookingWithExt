@@ -1,5 +1,4 @@
 ﻿using Core.Domain.Entities;
-using Infrastructure.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,7 +17,7 @@ namespace Infrastructure.Persistence.EntityConfigurations
                 price.Property(p => p.Currency).HasConversion<string>();
             });
 
-            entity.Property(p=>p.Category)
+            entity.Property(p => p.Category)
                 .HasConversion<string>()
                 .HasColumnType("nvarchar(50)");
 
@@ -29,7 +28,7 @@ namespace Infrastructure.Persistence.EntityConfigurations
                 availability.Property(a => a.RemainingSlots).HasConversion<int>();
             });
 
-           
+
         }
     }
 

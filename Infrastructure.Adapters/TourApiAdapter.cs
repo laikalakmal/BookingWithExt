@@ -22,7 +22,10 @@ namespace Infrastructure.Adapters
 
         public async Task<List<ProductDto>> FetchProductsAsync()
         {
-            var apiUrl = "https://cc392dcc-ec4b-491a-a6af-c2e1b7ca4750.mock.pstmn.io/tours";
+            //var apiUrl = "https://cc392dcc-ec4b-491a-a6af-c2e1b7ca4750.mock.pstmn.io/tours";
+
+
+            var apiUrl= "https://73a9649d-02aa-40ee-8c5a-c9fd60c90ecf.mock.pstmn.io/tours";
             var apiKey = "your-api-key";
             using var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Add("x-api-key", apiKey);
@@ -145,7 +148,7 @@ namespace Infrastructure.Adapters
 
 
 
-        public async  Task<PurchaseResponseDto> PurchaseProductAsync(ProductDto productDto, int quantity)
+        public async Task<PurchaseResponseDto> PurchaseProductAsync(ProductDto productDto, int quantity)
         {
             // there should be a api call for purchasing a product from external API.
             //since i'm working with mock api i will temporarly return a mock purchase response.
@@ -157,7 +160,7 @@ namespace Infrastructure.Adapters
             }
 
             var product = FetchProductByIdAsync(productDto.ExternalId).Result;
-            
+
 
             if (product == null)
             {
@@ -169,9 +172,9 @@ namespace Infrastructure.Adapters
                 };
             }
             //check if product is available for purchase
-            if (!product.Availability.IsAvailable||product.Availability.RemainingSlots<quantity)
+            if (!product.Availability.IsAvailable || product.Availability.RemainingSlots < quantity)
             {
-                
+
 
                 return new PurchaseResponseDto(productDto.ExternalId)
                 {
@@ -184,11 +187,11 @@ namespace Infrastructure.Adapters
             // Mocking a purchase response, in real scenario this should be replaced with actual API call to purchase the product.
 
 
-            
+
 
             var dto = new PurchaseResponseDto(Guid.NewGuid().ToString(), productDto.ExternalId)
             {
-                ProductId=product.Id,
+                ProductId = product.Id,
                 ExternalId = product.ExternalId,
                 Quantity = quantity,
                 ConfirmationCode = null,

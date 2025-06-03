@@ -71,5 +71,10 @@ namespace Core.Application.Services.Factories
             throw new InvalidOperationException(
                 $"Cannot purchase product of type {product.GetType().Name} with adapter for {typeof(TDto).Name}");
         }
+
+        public Task<bool> DeleteProductAsync(Guid id)
+        {
+            return _service.DeleteProductAsync(id);
+        }
     }
 }

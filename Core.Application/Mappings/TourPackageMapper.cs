@@ -16,7 +16,7 @@ namespace Core.Application.Mappings
             {
                 return new TourPackageDto(
                     id: tourPackage.Id,
-                    externalId: tourPackage.ExternalId,
+                    externalId: tourPackage.ExternalId ?? "",
                     name: tourPackage.Name,
                     price: tourPackage.Price,
                     description: tourPackage.Description ?? string.Empty,

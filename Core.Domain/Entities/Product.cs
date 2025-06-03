@@ -27,19 +27,24 @@ namespace Core.Domain.Entities
             this.Availability = availability;
         }
 
+        public Product()
+        {
+            
+        }
+
         public Guid Id { get; set; }
 
-        public string ExternalId { get; set; } // what is the external id of the product
+        public string? ExternalId { get; set; } // what is the external id of the product
         public string Name { get; set; }
         public Price Price { get; set; }
         public string? Description { get; set; }
         public ProductCategory Category { get; set; } //defines is it an tour or a hotel or something else
         public string Provider { get; set; } // what is the external provider of the product ex: booking.com
 
-        
+
 
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public AvailabilityInfo Availability { get ; set ; }
+        public AvailabilityInfo Availability { get; set; }
     }
 }

@@ -30,9 +30,9 @@ services:
          condition: service_healthy
 
 networks:
-    default:
-        name: productdb_network
-        driver: bridge
+  default:
+    name: bookwithext-network
+    external: true
 
 volumes:
   productdb_data:

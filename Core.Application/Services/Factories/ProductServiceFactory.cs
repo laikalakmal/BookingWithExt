@@ -19,7 +19,7 @@ namespace Core.Application.Services.Factories
             IServiceProvider serviceProvider,
             ProductCategory supportedCategory,
             string keyedServiceName,
-            Func<IProductRepository<TEntity>, IExternalProductApiAdapter, IProductService<TEntity, TDto>> serviceFactory)
+            Func<IProductRepository<TEntity>, IExternalProductApiAdapter?, IProductService<TEntity, TDto>> serviceFactory)
         {
             _serviceProvider = serviceProvider;
             _supportedCategory = supportedCategory;
@@ -31,19 +31,32 @@ namespace Core.Application.Services.Factories
         {
             return product.Category == _supportedCategory;
         }
+        public bool CanHandle(ProductCategory category)
+        {
+            return category == _supportedCategory;
+        }
+
+
 
         public IProductService<Product, ProductDto> CreateService()
         {
             IProductRepository<TEntity> repository = _serviceProvider.GetKeyedService<IProductRepository<TEntity>>(_keyedServiceName)
                 ?? throw new InvalidOperationException($"{typeof(TEntity).Name} repository service not found");
 
-            var adapter = _serviceProvider.GetKeyedService<IExternalProductApiAdapter>(_keyedServiceName)
-                ?? throw new InvalidOperationException($"{typeof(TEntity).Name} API adapter service not found");
+            var adapter = _serviceProvider.GetKeyedService<IExternalProductApiAdapter>(_keyedServiceName);
 
             // Create the specific service
-            IProductService<TEntity, TDto> service = _serviceFactory(repository, adapter);
+            IProductService<TEntity, TDto> service;
+            if (adapter == null)
+            {
+                // (like for CustomProductService)
+                service = _serviceFactory(repository, null);
+            }
+            else
+            {
+                service = _serviceFactory(repository, adapter);
+            }
 
-            // Wrap it in the adapter
             return new ProductServiceAdapter<TEntity, TDto>(service);
         }
     }

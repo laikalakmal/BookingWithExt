@@ -124,7 +124,7 @@ namespace Core.Application.Services.Concreate
         {
             var tourPackage = await _repository.GetByIdAsync(product.Id);
             var response = await _adapter.PurchaseProductAsync(product, quantity);
-            
+
             if (response.IsSuccess)
             {
                 if (tourPackage != null)
@@ -132,7 +132,7 @@ namespace Core.Application.Services.Concreate
                     tourPackage.Availability.RemainingSlots -= quantity;
                     bool updateSucceeded = await _repository.UpdateProduct(tourPackage);
 
-                   if(!updateSucceeded)
+                    if (!updateSucceeded)
                     {
                         throw new Exception($"Failed to update tour package with ID {tourPackage.Id} after purchase.");
                     }
@@ -140,6 +140,24 @@ namespace Core.Application.Services.Concreate
             }
 
             return response;
+        }
+
+        public async Task<bool> DeleteProductAsync(Guid id)
+        {
+            try
+            {
+                var product = await _repository.GetByIdAsync(id);
+                if (product == null)
+                {
+                    throw new KeyNotFoundException($"Tour package with ID {id} not found.");
+                }
+                return await _repository.DeleteProductAsync(id);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

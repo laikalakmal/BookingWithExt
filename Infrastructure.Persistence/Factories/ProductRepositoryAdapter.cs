@@ -18,6 +18,13 @@ namespace Infrastructure.Persistence.Factories
             await _repository.AddProductsAsync(typedProducts);
         }
 
+        public Task<bool> DeleteProductAsync(Guid id)
+        {
+           if (id == Guid.Empty)
+                throw new ArgumentException("Product ID cannot be empty.", nameof(id));
+            return _repository.DeleteProductAsync(id);
+        }
+
         public async Task<Product> GetByIdAsync(Guid id)
         {
             var typedProduct = await _repository.GetByIdAsync(id);
