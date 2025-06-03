@@ -18,10 +18,30 @@ namespace Infrastructure.Persistence.Factories
             await _repository.AddProductsAsync(typedProducts);
         }
 
+        public Task<bool> DeleteProductAsync(Guid id)
+        {
+           if (id == Guid.Empty)
+                throw new ArgumentException("Product ID cannot be empty.", nameof(id));
+            return _repository.DeleteProductAsync(id);
+        }
+
+        public async Task<Product> GetByIdAsync(Guid id)
+        {
+            var typedProduct = await _repository.GetByIdAsync(id);
+            return typedProduct as Product;
+        }
+
         public async Task<IEnumerable<Product>> GetProductsAsync()
         {
             var products = await _repository.GetProductsAsync();
             return products.Cast<Product>();
+        }
+
+        public async Task<bool> UpdateProduct(Product product)
+        {
+            if (product is not T typedProduct)
+                return false;
+            return await _repository.UpdateProduct(typedProduct);
         }
     }
 }

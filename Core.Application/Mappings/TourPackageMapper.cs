@@ -16,7 +16,7 @@ namespace Core.Application.Mappings
             {
                 return new TourPackageDto(
                     id: tourPackage.Id,
-                    externalId: tourPackage.ExternalId,
+                    externalId: tourPackage.ExternalId ?? "",
                     name: tourPackage.Name,
                     price: tourPackage.Price,
                     description: tourPackage.Description ?? string.Empty,
@@ -76,7 +76,7 @@ namespace Core.Application.Mappings
                             Penalty = tourPackage.CancellationPolicy.Penalty ?? string.Empty
                         },
                     availability: tourPackage.Availability is null
-                        ? new AvailabilityInfo { Status = string.Empty, RemainingSlots = 0 }
+                        ? new AvailabilityInfo()
                         : new AvailabilityInfo
                         {
                             Status = tourPackage.Availability.Status ?? string.Empty,
@@ -195,7 +195,6 @@ namespace Core.Application.Mappings
                     Accommodation = accommodation,
                     Transportation = transportation,
                     CancellationPolicy = cancellationPolicy,
-                    Availability = availability,
                     Images = tourPackageDto.Images ?? [],
                     TermsAndConditions = tourPackageDto.TermsAndConditions ?? string.Empty,
                     LastUpdated = tourPackageDto.LastUpdated

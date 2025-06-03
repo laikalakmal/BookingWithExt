@@ -26,32 +26,46 @@ public static class ServiceCollectionExtensions
         // Repositories with keyed DI
         services.AddKeyedScoped<IProductRepository<TourPackage>, TourPackageRepository>("tour");
         services.AddKeyedScoped<IProductRepository<HolidayPackage>, HolidayPackageRepository>("holiday");
+        services.AddKeyedScoped<IProductRepository<CustomProduct>, CustomProductRepository>("custom");
 
         // External API adapters
         services.AddKeyedScoped<IExternalProductApiAdapter, TourApiAdapter>("tour");
         services.AddKeyedScoped<IExternalProductApiAdapter, HolidayPackageAdapter>("holiday");
 
+        // External API adapters
+        services.AddScoped<IExternalProductApiAdapter, TourApiAdapter>();
+        services.AddScoped<IExternalProductApiAdapter, HolidayPackageAdapter>();
+
         // Standard repository registrations
         services.AddScoped<IProductRepository<TourPackage>, TourPackageRepository>();
         services.AddScoped<IProductRepository<HolidayPackage>, HolidayPackageRepository>();
-        
-      
+        services.AddScoped<IProductRepository<CustomProduct>, CustomProductRepository>();
+
 
         // Generic product repository (depends on repository factories)
         services.AddScoped<IProductRepository<Product>, GenericProductRepository>();
 
-
+        // Register repository factories for specific product types. whenever adding a new product type, you have to add a new factory registration here.
         services.AddScoped<IProductRepositoryFactory>(sp =>
           new ProductRepositoryFactory<TourPackage>(
-        sp.GetRequiredService<AppDbContext>(),
-        ProductCategory.TourPackage,
-        context => new TourPackageRepository(context)));
+             sp.GetRequiredService<AppDbContext>(),
+                ProductCategory.TourPackage,
+                context => new TourPackageRepository(context))
+          );
 
         services.AddScoped<IProductRepositoryFactory>(sp =>
             new ProductRepositoryFactory<HolidayPackage>(
                 sp.GetRequiredService<AppDbContext>(),
                 ProductCategory.HolidayPackage,
-                context => new HolidayPackageRepository(context)));
+                context => new HolidayPackageRepository(context))
+            );
+
+        services.AddScoped<IProductRepositoryFactory>(sp =>
+           new ProductRepositoryFactory<CustomProduct>(
+               sp.GetRequiredService<AppDbContext>(),
+               ProductCategory.Custom,
+               context => new CustomProductRepository(context))
+           );
 
         return services;
     }
@@ -71,17 +85,20 @@ public static class ServiceCollectionExtensions
                 sp.GetRequiredKeyedService<IExternalProductApiAdapter>("holiday")
             ));
 
-      
+        services.AddKeyedScoped<IProductService<CustomProduct, CustomProductDto>, CustomProductService>("custom", (sp, _) =>
+           new CustomProductService(
+               sp.GetRequiredKeyedService<IProductRepository<CustomProduct>>("custom")
+           ));
 
         // Register generic product service (depends on service factories)
-        services.AddScoped<IProductService<Product, ProductDto>, GenericProductService>();
 
+        // Register product service factories for specific product types. whenever adding a new product type, you have to add a new factory registration here.
         services.AddScoped<IProductServiceFactory>(sp =>
-    new ProductServiceFactory<TourPackage, TourPackageDto>(
-        sp,
-        ProductCategory.TourPackage,
-        "tour",
-        (repo, adapter) => new TourPackageService(repo, adapter)));
+             new ProductServiceFactory<TourPackage, TourPackageDto>(
+             sp,
+              ProductCategory.TourPackage,
+              "tour",
+              (repo, adapter) => new TourPackageService(repo, adapter)));
 
         services.AddScoped<IProductServiceFactory>(sp =>
             new ProductServiceFactory<HolidayPackage, HolidayPackageDto>(
@@ -90,12 +107,24 @@ public static class ServiceCollectionExtensions
                 "holiday",
                 (repo, adapter) => new HolidayPackageService(repo, adapter)));
 
+        services.AddScoped<IProductServiceFactory>(sp =>
+            new ProductServiceFactory<CustomProduct, CustomProductDto>(
+                sp,
+                ProductCategory.Custom,
+                "custom",
+                (repo, _) => new CustomProductService(repo)));
+
+        services.AddScoped<IProductService<Product, ProductDto>, GenericProductService>();
         // Non-keyed registrations for MediatR
-        services.AddScoped(sp =>
+
+        services.AddScoped<IProductService<TourPackage, TourPackageDto>>(sp =>
             sp.GetRequiredKeyedService<IProductService<TourPackage, TourPackageDto>>("tour"));
 
-        services.AddScoped(sp =>
+        services.AddScoped<IProductService<HolidayPackage, HolidayPackageDto>>(sp =>
             sp.GetRequiredKeyedService<IProductService<HolidayPackage, HolidayPackageDto>>("holiday"));
+
+        services.AddScoped<IProductService<CustomProduct, CustomProductDto>>(sp =>
+            sp.GetRequiredKeyedService<IProductService<CustomProduct, CustomProductDto>>("custom"));
 
         // MediatR registrations
         services.AddMediatR(cfg =>

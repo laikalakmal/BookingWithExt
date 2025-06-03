@@ -28,8 +28,9 @@ namespace Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Category")
-                        .HasColumnType("int");
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -38,7 +39,6 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ExternalId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -57,6 +57,21 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("Products", (string)null);
 
                     b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("Core.Domain.Entities.CustomProduct", b =>
+                {
+                    b.HasBaseType("Core.Domain.Entities.Product");
+
+                    b.Property<string>("Attributes")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Attributes");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("ImageUrl");
+
+                    b.ToTable("CustomProducts", (string)null);
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.HolidayPackage", b =>
@@ -98,10 +113,6 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasBaseType("Core.Domain.Entities.Product");
 
                     b.Property<string>("Accommodation")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Availability")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -149,6 +160,28 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Core.Domain.Entities.Product", b =>
                 {
+                    b.OwnsOne("Core.Domain.Entities.SupportClasses.AvailabilityInfo", "Availability", b1 =>
+                        {
+                            b1.Property<Guid>("ProductId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<bool>("IsAvailable")
+                                .HasColumnType("bit");
+
+                            b1.Property<int>("RemainingSlots")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Status")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("ProductId");
+
+                            b1.ToTable("Products");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProductId");
+                        });
+
                     b.OwnsOne("Price", "Price", b1 =>
                         {
                             b1.Property<Guid>("ProductId")
@@ -169,7 +202,19 @@ namespace Infrastructure.Persistence.Migrations
                                 .HasForeignKey("ProductId");
                         });
 
+                    b.Navigation("Availability")
+                        .IsRequired();
+
                     b.Navigation("Price")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Core.Domain.Entities.CustomProduct", b =>
+                {
+                    b.HasOne("Core.Domain.Entities.Product", null)
+                        .WithOne()
+                        .HasForeignKey("Core.Domain.Entities.CustomProduct", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

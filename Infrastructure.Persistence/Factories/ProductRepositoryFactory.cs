@@ -4,17 +4,17 @@ using Core.Domain.Enums;
 
 namespace Infrastructure.Persistence.Factories
 {
-    public class ProductRepositoryFactory<TEntity> : IProductRepositoryFactory 
-        where TEntity : Product
+    public class ProductRepositoryFactory<T> : IProductRepositoryFactory
+        where T : Product
     {
         private readonly AppDbContext _context;
         private readonly ProductCategory _supportedCategory;
-        private readonly Func<AppDbContext, IProductRepository<TEntity>> _repositoryFactory;
+        private readonly Func<AppDbContext, IProductRepository<T>> _repositoryFactory;
 
         public ProductRepositoryFactory(
-            AppDbContext context, 
+            AppDbContext context,
             ProductCategory supportedCategory,
-            Func<AppDbContext, IProductRepository<TEntity>> repositoryFactory)
+            Func<AppDbContext, IProductRepository<T>> repositoryFactory)
         {
             _context = context;
             _supportedCategory = supportedCategory;
@@ -29,7 +29,7 @@ namespace Infrastructure.Persistence.Factories
         public IProductRepository<Product> CreateRepository()
         {
             var repository = _repositoryFactory(_context);
-            return new ProductRepositoryAdapter<TEntity>(repository);
+            return new ProductRepositoryAdapter<T>(repository);
         }
     }
 }

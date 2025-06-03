@@ -9,8 +9,18 @@ namespace Core.Application.Interfaces
 
     public interface IExternalProductApiAdapter
     {
+
+
+        string AdapterName { get; }
+
         Task<List<ProductDto>> FetchProductsAsync();
+
+        Task<ProductDto?> FetchProductByIdAsync(string externalId);
+
+        Task<PurchaseResponseDto> PurchaseProductAsync(ProductDto product, int quantity);
 
 
     }
 }
+
+

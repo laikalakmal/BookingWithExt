@@ -1,4 +1,5 @@
-﻿using Core.Domain.Enums;
+﻿using Core.Domain.Entities.SupportClasses;
+using Core.Domain.Enums;
 
 namespace Core.Application.DTOs
 {
@@ -8,11 +9,13 @@ namespace Core.Application.DTOs
         public string ExternalId { get; set; }
         public string Name { get; set; }
         public Price Price { get; set; }
+
+        public AvailabilityInfo Availability { get; set; }
         public string Description { get; set; }
         public ProductCategory Category { get; set; }
         public string Provider { get; set; }
 
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
@@ -23,6 +26,7 @@ namespace Core.Application.DTOs
             string externalId,
             string name,
             Price price,
+            AvailabilityInfo availability,
             string description,
             ProductCategory category,
             string provider,
@@ -34,6 +38,7 @@ namespace Core.Application.DTOs
             ExternalId = externalId;
             Name = name;
             Price = price;
+            Availability = availability;
             Description = description;
             Category = category;
             Provider = provider;
