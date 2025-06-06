@@ -10,7 +10,7 @@ namespace Core.Application.Mappings
         public static CustomProductDto FromDomain(CustomProduct product)
         {
             if (product == null)
-                return null;
+                throw new ArgumentNullException(nameof(product), "CustomProduct cannot be null.");
 
             return new CustomProductDto(
                     id: product.Id,
@@ -27,17 +27,6 @@ namespace Core.Application.Mappings
                     attributes: product.Attributes
                 )
             {
-                Id = product.Id,
-                ExternalId = product.ExternalId ?? "",
-                Name = product.Name,
-                Price = product.Price,
-                Description = product.Description ?? "",
-                Category = product.Category,
-                Provider = product.Provider,
-                Availability = product.Availability,
-                CreatedAt = product.CreatedAt,
-                UpdatedAt = product.UpdatedAt,
-                Attributes = product.Attributes,
                 ImageUrl= product.ImageUrl ?? string.Empty
             };
         }
@@ -45,7 +34,7 @@ namespace Core.Application.Mappings
         public static CustomProduct ToDomain(CustomProductDto productDto)
         {
             if (productDto == null)
-                return null;
+                throw new ArgumentNullException(nameof(productDto), "CustomProductDto cannot be null.");
 
             return new CustomProduct(
                 externalId: productDto.ExternalId,

@@ -26,6 +26,11 @@ namespace Infrastructure.Persistence.Factories
             return product.Category == _supportedCategory;
         }
 
+        public bool CanHandle(ProductCategory category)
+        {
+            return category == _supportedCategory;
+        }
+
         public IProductRepository<Product> CreateRepository()
         {
             var repository = _repositoryFactory(_context);

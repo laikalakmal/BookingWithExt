@@ -146,12 +146,8 @@ namespace Core.Application.Services.Concreate
         {
             try
             {
-                var product = await _repository.GetByIdAsync(id);
-                if (product == null)
-                {
-                    throw new KeyNotFoundException($"Tour package with ID {id} not found.");
-                }
-                return await _repository.DeleteProductAsync(id);
+                var product = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException($"Tour package with ID {id} not found.");
+                return await _repository.DeleteProductAsync(product);
             }
             catch (Exception)
             {

@@ -1,6 +1,7 @@
 ﻿using Core.Application.Interfaces;
 using Core.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
 
 namespace Infrastructure.Persistence.Repositories.Concreate
 {
@@ -51,6 +52,28 @@ namespace Infrastructure.Persistence.Repositories.Concreate
             {
                 throw new InvalidOperationException("An error occurred while deleting the holiday package.", ex);
             }
+        }
+
+        public async Task<bool> DeleteProductAsync(HolidayPackage product)
+        {
+            try
+            {
+                if (product == null)
+                    throw new ArgumentNullException(nameof(product), "Product cannot be null.");
+                if (product is not HolidayPackage)
+                    throw new ArgumentException("Product must be of type HolidayPackage.", nameof(product));
+
+                _context.HolidayPackages.Remove(product);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+
+                throw new InvalidOperationException("An error occurred while deleting the holiday package.", ex);
+            }
+
+
         }
 
         public async Task<HolidayPackage> GetByIdAsync(Guid id)

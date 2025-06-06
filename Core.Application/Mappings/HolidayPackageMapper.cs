@@ -16,7 +16,7 @@ namespace Core.Application.Mappings
 
                 return new HolidayPackageDto(
                     id: holidayPackage.Id,
-                    externalId: holidayPackage.ExternalId,
+                    externalId: holidayPackage.ExternalId ?? throw new ArgumentNullException("External ID is required for external products"),
                     name: holidayPackage.Name,
                     price: holidayPackage.Price,
                     availability: holidayPackage.Availability,

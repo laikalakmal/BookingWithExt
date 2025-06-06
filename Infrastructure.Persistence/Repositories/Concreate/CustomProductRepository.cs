@@ -93,6 +93,28 @@ namespace Infrastructure.Persistence.Repositories.Concreate
                 return true;
             }
         }
+
+        public async Task<bool> DeleteProductAsync(CustomProduct product)
+        {
+            try
+            {
+                if (product == null)
+                {
+                    throw new ArgumentNullException(nameof(product), "Product cannot be null.");
+                }
+                if (product is not CustomProduct customProduct)
+                {
+                    throw new InvalidOperationException("Product is not of type CustomProduct.");
+                }
+                _context.CustomProducts.Remove(customProduct);
+                return await _context.SaveChangesAsync() > 0;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("An error occurred while deleting the custom product.", ex);
+            }
+
+        }
     }
 }
 

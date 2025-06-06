@@ -14,6 +14,7 @@ using Infrastructure.Persistence.Factories;
 using Infrastructure.Persistence.Repositories;
 using Infrastructure.Persistence.Repositories.Concreate;
 using Microsoft.EntityFrameworkCore;
+using ProductServiceAPI;
 // Extension methods for clean service registration by layer
 public static class ServiceCollectionExtensions
 {
@@ -125,6 +126,15 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IProductService<CustomProduct, CustomProductDto>>(sp =>
             sp.GetRequiredKeyedService<IProductService<CustomProduct, CustomProductDto>>("custom"));
+
+        //  explicit registration for IEditableProduct
+        services.AddScoped<IEditableProduct<CustomProductDto>>(sp =>
+            (IEditableProduct<CustomProductDto>)sp.GetRequiredKeyedService<IProductService<CustomProduct, CustomProductDto>>("custom"));
+
+        //  explicit registration for IAddableProduct
+        services.AddScoped<IAddableProduct<CustomProduct,CustomProductDto>>(sp =>
+           (IAddableProduct<CustomProduct, CustomProductDto>)sp.GetRequiredKeyedService<IProductService<CustomProduct, CustomProductDto>>("custom"));
+
 
         // MediatR registrations
         services.AddMediatR(cfg =>

@@ -1,5 +1,6 @@
 ﻿using Core.Application.Interfaces;
 using Core.Domain.Entities;
+using Core.Domain.Enums;
 
 namespace Infrastructure.Persistence.Repositories
 {
@@ -11,10 +12,20 @@ namespace Infrastructure.Persistence.Repositories
     public class GenericProductRepository : IProductRepository<Product>
     {
         private readonly IEnumerable<IProductRepositoryFactory> _repositoryFactories;
+        private readonly Dictionary<Guid, ProductCategory> _productCategoryCache = new();
 
         public GenericProductRepository(IEnumerable<IProductRepositoryFactory> repositoryFactories)
         {
             _repositoryFactories = repositoryFactories ?? throw new ArgumentNullException(nameof(repositoryFactories));
+        }
+
+        // Add a method to get the appropriate repository factory for a category
+        private IProductRepositoryFactory GetFactoryForCategory(ProductCategory category)
+        {
+            var factory = _repositoryFactories.FirstOrDefault(f => f.CanHandle(category));
+            if (factory == null)
+                throw new InvalidOperationException($"No repository found for product category {category}.");
+            return factory;
         }
 
         public async Task AddProductsAsync(List<Product> products)
@@ -24,36 +35,91 @@ namespace Infrastructure.Persistence.Repositories
             foreach (var (repo, productGroup) in productsByRepo)
             {
                 await repo.AddProductsAsync(productGroup);
+
+                // Update our cache with the new products
+                foreach (var product in productGroup)
+                {
+                    _productCategoryCache[product.Id] = product.Category;
+                }
             }
         }
 
         public async Task<bool> DeleteProductAsync(Guid id)
         {
-            foreach (var factory in _repositoryFactories)
+            try
             {
-                try
+                // First try to use our cache to find the category
+                if (_productCategoryCache.TryGetValue(id, out var category))
                 {
+                    var factory = GetFactoryForCategory(category);
                     var repo = factory.CreateRepository();
                     var deleted = await repo.DeleteProductAsync(id);
                     if (deleted)
                     {
-                        Console.WriteLine("deleted\n "+repo?.ToString()+"\n");
+                        _productCategoryCache.Remove(id);
                         return true;
                     }
                 }
-                catch (Exception)
-                {
-                    // Continue to next repository if this one fails
-                }
-            }
 
-            return false; // No repository could delete the product
+                // Fall back to the original approach if not in cache
+                foreach (var factory in _repositoryFactories)
+                {
+                    try
+                    {
+                        var repo = factory.CreateRepository();
+                        var deleted = await repo.DeleteProductAsync(id);
+                        if (deleted)
+                        {
+                            _productCategoryCache.Remove(id);
+                            return true;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // Continue to next repository if this one fails
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error deleting product with ID {id}", ex);
+            }
+        }
+
+
+        public async Task<bool> DeleteProductAsync(Product product)
+        {
+            ArgumentNullException.ThrowIfNull(product);
+            var factory = _repositoryFactories.FirstOrDefault(f => f.CanHandle(product)) ?? throw new InvalidOperationException($"No repository found for product category {product.Category}.");
+            var repo = factory.CreateRepository();
+            var result = await repo.DeleteProductAsync(product);
+            if (result)
+            {
+                // Update our cache
+                _productCategoryCache.Remove(product.Id);
+            }
+            return result;
         }
 
         public async Task<Product> GetByIdAsync(Guid id)
         {
             try
             {
+                // First try to use our cache to find the category
+                if (_productCategoryCache.TryGetValue(id, out var category))
+                {
+                    var factory = GetFactoryForCategory(category);
+                    var repo = factory.CreateRepository();
+                    var product = await repo.GetByIdAsync(id);
+                    if (product != null)
+                    {
+                        return product;
+                    }
+                }
+
+                // Fall back to the original approach if not in cache
                 foreach (var factory in _repositoryFactories)
                 {
                     try
@@ -62,13 +128,14 @@ namespace Infrastructure.Persistence.Repositories
                         var product = await repo.GetByIdAsync(id);
                         if (product != null)
                         {
+                            // Update cache for future lookups
+                            _productCategoryCache[id] = product.Category;
                             return product;
                         }
                     }
                     catch (Exception)
                     {
-
-                        // ctninue to the next factory if this one fails
+                        // Continue to the next factory if this one fails
                     }
                 }
 
@@ -76,10 +143,11 @@ namespace Infrastructure.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error retrieving product with ID {id}: "+ex.Message, ex);
+                throw new Exception($"Error retrieving product with ID {id}: " + ex.Message, ex);
             }
         }
 
+        // Update the cache when getting all products
         public async Task<IEnumerable<Product>> GetProductsAsync()
         {
             try
@@ -90,6 +158,13 @@ namespace Infrastructure.Persistence.Repositories
                 {
                     var repo = factory.CreateRepository();
                     var products = await repo.GetProductsAsync();
+
+                    // Update our cache with all products
+                    foreach (var product in products)
+                    {
+                        _productCategoryCache[product.Id] = product.Category;
+                    }
+
                     results.AddRange(products);
                 }
 
@@ -98,10 +173,10 @@ namespace Infrastructure.Persistence.Repositories
             catch (Exception)
             {
                 throw;
-
             }
         }
 
+        // Update the cache when updating a product
         public async Task<bool> UpdateProduct(Product product)
         {
             if (product == null)
@@ -114,8 +189,15 @@ namespace Infrastructure.Persistence.Repositories
                 throw new InvalidOperationException($"No repository found for product category {product.Category}.");
 
             var repo = factory.CreateRepository();
+            var result = await repo.UpdateProduct(product);
 
-            return await repo.UpdateProduct(product);
+            if (result)
+            {
+                // Update our cache
+                _productCategoryCache[product.Id] = product.Category;
+            }
+
+            return result;
         }
 
         private Dictionary<IProductRepository<Product>, List<Product>> GroupProductsByRepository(List<Product> products)
@@ -145,7 +227,6 @@ namespace Infrastructure.Persistence.Repositories
             }
             catch (Exception ex)
             {
-
                 throw new Exception(" Error at Repository factory", ex);
             }
         }

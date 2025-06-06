@@ -1,4 +1,5 @@
 using Core.Domain.Entities;
+using Core.Domain.Enums;
 
 namespace Core.Application.Interfaces
 {
@@ -10,6 +11,8 @@ namespace Core.Application.Interfaces
     public interface IProductRepositoryFactory
     {
         bool CanHandle(Product product);
+
+        bool CanHandle(ProductCategory category);
         IProductRepository<Product> CreateRepository();
     }
 }

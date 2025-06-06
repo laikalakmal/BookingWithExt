@@ -55,6 +55,18 @@ namespace Infrastructure.Persistence.Repositories.Concreate
             }
         }
 
+        public async Task<bool> DeleteProductAsync(TourPackage product)
+        {
+            if(product == null)
+                throw new ArgumentNullException(nameof(product), "Product cannot be null.");
+            if(product is not TourPackage)
+                throw new ArgumentException("Invalid product type. Expected TourPackage.", nameof(product));
+
+            _context.TourPackages.Remove(product);
+            return await _context.SaveChangesAsync()>0;
+
+        }
+
         public async Task<TourPackage> GetByIdAsync(Guid id)
         {
             try

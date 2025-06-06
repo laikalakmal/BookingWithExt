@@ -1,81 +1,84 @@
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-internal class Program
+namespace ProductServiceAPI
 {
-    private static void Main(string[] args)
+    internal class Program
     {
-        var builder = WebApplication.CreateBuilder(args);
-
-        // Register services by architectural layer
-        builder.Services
-            .AddInfrastructureServices(builder.Configuration)
-            .AddApplicationServices()
-            .AddWebApiServices();
-
-        // Add health checks
-        builder.Services.AddHealthChecks()
-            .AddDbContextCheck<AppDbContext>();
-
-        var app = builder.Build();
-
-        // Apply migrations if specified or in development mode
-        if (args.Length > 0 && args[0] == "--apply-migrations" || app.Environment.IsDevelopment())
+        private static void Main(string[] args)
         {
-            try
+            var builder = WebApplication.CreateBuilder(args);
+
+            // Register services by architectural layer
+            builder.Services
+                .AddInfrastructureServices(builder.Configuration)
+                .AddApplicationServices()
+                .AddWebApiServices();
+
+            // Add health checks
+            builder.Services.AddHealthChecks()
+                .AddDbContextCheck<AppDbContext>();
+
+            var app = builder.Build();
+
+            // Apply migrations if specified or in development mode
+            if (args.Length > 0 && args[0] == "--apply-migrations" || app.Environment.IsDevelopment())
             {
-
-                using var scope = app.Services.CreateScope();
-                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-
-                // Check if there are any pending migrations before applying
-                var pendingMigrations = dbContext.Database.GetPendingMigrations().ToList();
-                if (pendingMigrations.Any())
+                try
                 {
-                    dbContext.Database.EnsureDeleted(); // Optional: Ensure the database is deleted before applying migrations
-                    logger.LogInformation("Applying {Count} pending migrations: {Migrations}",
-                        pendingMigrations.Count,
-                        string.Join(", ", pendingMigrations));
-                    dbContext.Database.Migrate();
+
+                    using var scope = app.Services.CreateScope();
+                    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+                    // Check if there are any pending migrations before applying
+                    var pendingMigrations = dbContext.Database.GetPendingMigrations().ToList();
+                    if (pendingMigrations.Any())
+                    {
+                        dbContext.Database.EnsureDeleted(); // Optional: Ensure the database is deleted before applying migrations
+                        logger.LogInformation("Applying {Count} pending migrations: {Migrations}",
+                            pendingMigrations.Count,
+                            string.Join(", ", pendingMigrations));
+                        dbContext.Database.Migrate();
+                    }
+                    else
+                    {
+                        logger.LogInformation("No pending migrations to apply");
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    logger.LogInformation("No pending migrations to apply");
+                    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while migrating the database");
+
+                    // In development, we might want to see the error, but in production we should continue
+                    if (!app.Environment.IsDevelopment())
+                    {
+                        // Continue application startup even if migrations failed
+                        logger.LogWarning("Application continuing despite migration failure");
+                    }
+                    else
+                    {
+                        throw; // Rethrow in development to see the full error
+                    }
                 }
             }
-            catch (Exception ex)
+
+            // Configure the HTTP request pipeline
+            if (app.Environment.IsDevelopment())
             {
-                var logger = app.Services.GetRequiredService<ILogger<Program>>();
-                logger.LogError(ex, "An error occurred while migrating the database");
-
-                // In development, we might want to see the error, but in production we should continue
-                if (!app.Environment.IsDevelopment())
-                {
-                    // Continue application startup even if migrations failed
-                    logger.LogWarning("Application continuing despite migration failure");
-                }
-                else
-                {
-                    throw; // Rethrow in development to see the full error
-                }
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
+
+            app.UseHttpsRedirection();
+            app.UseAuthorization();
+            app.MapControllers();
+
+            // Map health check endpoint
+            app.MapHealthChecks("/health");
+
+            app.Run();
         }
-
-        // Configure the HTTP request pipeline
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
-
-        app.UseHttpsRedirection();
-        app.UseAuthorization();
-        app.MapControllers();
-
-        // Map health check endpoint
-        app.MapHealthChecks("/health");
-
-        app.Run();
     }
 }

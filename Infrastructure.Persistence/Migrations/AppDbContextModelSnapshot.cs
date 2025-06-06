@@ -68,7 +68,7 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnName("Attributes");
 
                     b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("ImageUrl");
 
                     b.ToTable("CustomProducts", (string)null);
