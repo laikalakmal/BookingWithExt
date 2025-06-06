@@ -18,5 +18,6 @@ namespace Core.Application.Interfaces
         Task<bool> UpdateProduct(T product);
 
         Task<bool> DeleteProductAsync(Guid id);
+        Task<bool> DeleteProductAsync(T product);
     }
 }

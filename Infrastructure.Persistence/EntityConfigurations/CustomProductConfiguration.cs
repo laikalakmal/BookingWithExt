@@ -29,7 +29,7 @@ namespace Infrastructure.Persistence.EntityConfigurations
 
             entity.Property(e => e.ImageUrl)
                 .HasColumnName("ImageUrl")
-                .HasColumnType("nvarchar(255)")
+                .HasColumnType("nvarchar(max)")
                 .IsRequired(false);
         }
     }

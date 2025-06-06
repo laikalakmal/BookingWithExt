@@ -1,5 +1,6 @@
 ﻿using Core.Application.DTOs;
 using Core.Application.Features.Products.Commands.AddProduct;
+using Core.Application.Features.Products.Commands.EditCustomProducts;
 using Core.Application.Features.Products.Commands.PurchaseProduct;
 using Core.Application.Features.Products.Commands.SyncProducts;
 using Core.Application.Features.Products.Queries.Availability;
@@ -10,9 +11,10 @@ using Core.Domain.Entities.SupportClasses;
 using Core.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using ProductService.API.Controllers;
 using System.ComponentModel.DataAnnotations;
 
-namespace ProductService.API.Controllers
+namespace ProductServiceAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -161,7 +163,7 @@ namespace ProductService.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing the purchase." +ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing the purchase." + ex);
             }
         }
 
@@ -190,7 +192,7 @@ namespace ProductService.API.Controllers
             try
             {
                 var result = await _mediator.Send(new DeleteProductCommand(id));
-                if (result==true)
+                if (result == true)
                 {
                     return StatusCode(StatusCodes.Status200OK);
                 }
@@ -198,12 +200,46 @@ namespace ProductService.API.Controllers
                 {
                     return StatusCode(StatusCodes.Status404NotFound, $"Product with ID {id} not found.");
                 }
-                 
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    $"An error occurred while deleting the product: {ex.Message}");
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateProduct(Guid id, [FromBody] AddProductRequest request)
+        {
+            if (request == null)
+            {
+                return BadRequest("Invalid product data");
+            }
+
+            try
+            {
+                var command = new EditProductCommand
+                {
+                    ProductId = id,
+                    productRequest = request
+                };
+
+                var result = await _mediator.Send(command);
+
+                if (result.Success)
+                {
+                    return Ok(result.Message);
+                }
+                else
+                {
+                    return BadRequest(result.Message);
+                }
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, 
-                    $"An error occurred while deleting the product: {ex.Message}");
+                    $"An error occurred while updating the product: {ex.Message}");
             }
         }
     }

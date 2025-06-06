@@ -26,23 +26,14 @@ namespace Core.Application.Features.Products.Commands.PurchaseProduct
             try
             {
 
-                ProductDto product = await _productService.GetByIdAsync(request.ProductId);
-
-                if (product == null)
-                {
-
-                    throw new InvalidOperationException($"Product with ID {request.ProductId} not found");
-                }
-
+                ProductDto product = await _productService.GetByIdAsync(request.ProductId) ?? throw new InvalidOperationException($"Product with ID {request.ProductId} not found");
                 var response = await _productService.PurchaseProductAsync(product, request.Quantity);
-
-
                 return response;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                throw new ApplicationException($"Failed to purchase product with ID {request.ProductId}", ex);
             }
         }
     }

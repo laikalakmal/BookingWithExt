@@ -64,7 +64,6 @@ namespace Core.Application.Services.Factories
         {
             if (product is TDto typedDto)
             {
-                // Delegate to the underlying service, casting as needed
                 return _service.PurchaseProductAsync(typedDto, quantity);
             }
 

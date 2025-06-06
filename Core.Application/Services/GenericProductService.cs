@@ -110,19 +110,14 @@ namespace Core.Application.Services
 
         public async Task<ProductDto> GetByIdAsync(Guid id)
         {
-            var product = await _productRepository.GetByIdAsync(id);
-            if (product == null)
-            {
-                throw new KeyNotFoundException($"Product with ID {id} not found.");
-            }
+            var product = await _productRepository.GetByIdAsync(id) ?? throw new KeyNotFoundException($"Product with ID {id} not found.");
             var productDto = MapToDto(product);
             return productDto;
         }
 
         public async Task<PurchaseResponseDto> PurchaseProductAsync(ProductDto product, int quantity)
         {
-            if (product == null)
-                throw new ArgumentNullException(nameof(product));
+            ArgumentNullException.ThrowIfNull(product);
             if (quantity <= 0 && quantity> product.Availability?.RemainingSlots)
                 throw new ArgumentOutOfRangeException(nameof(quantity), "Quantity must be greater than zero.");
 

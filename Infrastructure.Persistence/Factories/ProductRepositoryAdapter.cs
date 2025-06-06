@@ -25,6 +25,15 @@ namespace Infrastructure.Persistence.Factories
             return _repository.DeleteProductAsync(id);
         }
 
+        public Task<bool> DeleteProductAsync(Product product)
+        {
+            if(product == null)
+                throw new ArgumentNullException(nameof(product), "Product cannot be null.");
+            if (product is not T typedProduct)
+                throw new InvalidCastException($"Cannot cast {product.GetType().Name} to {typeof(T).Name}.");
+            return _repository.DeleteProductAsync(typedProduct);
+        }
+
         public async Task<Product> GetByIdAsync(Guid id)
         {
             var typedProduct = await _repository.GetByIdAsync(id);

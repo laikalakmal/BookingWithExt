@@ -17,6 +17,6 @@ namespace Core.Application.Interfaces
         TDomain MapToDomain(TDto dto);
         Task<PurchaseResponseDto> PurchaseProductAsync(ProductDto product, int quantity);
 
-        Task<bool> DeleteProductAsync(Guid id); 
+        Task<bool> DeleteProductAsync(Guid id);
     }
 }

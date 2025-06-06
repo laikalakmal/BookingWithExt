@@ -10,10 +10,10 @@ COPY ["Core.Domain/*.csproj", "Core.Domain/"]
 COPY ["Infrastructure.Adapters/*.csproj", "Infrastructure.Adapters/"]
 COPY ["Infrastructure.Persistence/*.csproj", "Infrastructure.Persistence/"]
 COPY ["ProductService.API/ProductServiceAPI.csproj", "ProductService.API/"]
-COPY ["Core.ApplicationTests/*.csproj", "Core.ApplicationTests/"]
+#COPY ["Core.ApplicationTests/*.csproj", "Core.ApplicationTests/"]
 
 # Restore dependencies
-RUN dotnet restore
+RUN dotnet restore "ProductService.API/ProductServiceAPI.csproj"
 
 # Copy the rest of the code
 COPY . .

@@ -172,9 +172,10 @@ namespace Infrastructure.Adapters
             // so we fetch all products and filter them by externalId to mimic the behavior of fetching a single product.
             var products =  FetchProductsAsync();
             
-            if(products == null || !products.Result.Any())
+            if(products == null || products.Result.Count == 0)
             {
-                return null;
+                throw new HttpRequestException("Failed to retrieve any products from the holiday package API.");
+
             }
             else
             {

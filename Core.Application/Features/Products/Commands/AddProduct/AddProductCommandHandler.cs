@@ -1,43 +1,57 @@
+using Core.Application.DTOs;
 using Core.Application.Interfaces;
 using Core.Domain.Entities;
+using Core.Domain.Entities.SupportClasses;
 using Core.Domain.Enums;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.Application.Features.Products.Commands.AddProduct
 {
     public class AddProductCommandHandler : IRequestHandler<AddProductCommand, Guid>
     {
-        private readonly IProductRepository<CustomProduct> _repository;
+        private readonly IAddableProduct<CustomProduct,CustomProductDto> _customProductService;
 
-        public AddProductCommandHandler([FromKeyedServices("custom")] IProductRepository<CustomProduct> repository)
+        public AddProductCommandHandler(IAddableProduct<CustomProduct,CustomProductDto> customProductService)
         {
-            _repository = repository;
+            _customProductService = customProductService ?? throw new ArgumentNullException(nameof(customProductService));
         }
 
         public async Task<Guid> Handle(AddProductCommand request, CancellationToken cancellationToken)
         {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+
             var productRequest = request.Request;
 
-            // Create price value object
-            var price = Price.Create(productRequest.Amount ?? 0, productRequest.Currency ?? Currency.USD.ToString());
-
-            // Create custom product entity
-            var customProduct = new CustomProduct(
+            // Map to DTO
+            var customProductDto = new CustomProductDto(
+                id: Guid.NewGuid(),
                 externalId: productRequest.ExternalId ?? Guid.NewGuid().ToString(),
-                name: productRequest.Name ?? "",
-                price: price,
+                name: productRequest.Name ?? string.Empty,
+                price: Price.Create(
+                    productRequest.Amount ?? 0,
+                    productRequest.Currency ?? Currency.USD.ToString()
+                ),
+                availability: new AvailabilityInfo
+                {
+                    Status = productRequest.Availability?.Status,
+                    RemainingSlots = productRequest.Availability?.RemainingSlots ?? 0
+                },
                 description: productRequest.Description ?? string.Empty,
                 category: productRequest.Category,
                 provider: productRequest.Provider ?? "BookWithExt",
-                availability: productRequest.Availability,
-                attributes: productRequest.Attributes
+                imageUrl: productRequest.ImageUrl ?? string.Empty,
+                createdAt: DateTime.UtcNow,
+                updatedAt: DateTime.UtcNow,
+                attributes: productRequest.Attributes ?? new Dictionary<string, object>()
             );
 
-            // Add product to database
-            await _repository.AddProductsAsync(new List<CustomProduct> { customProduct });
+            // Use the service to add the product
+            var result = await _customProductService.AddProductAsync(customProductDto);
 
-            return customProduct.Id;
+            return result;
         }
     }
 }
+
+

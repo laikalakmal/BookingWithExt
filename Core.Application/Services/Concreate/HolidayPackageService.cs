@@ -141,7 +141,7 @@ namespace Core.Application.Services.Concreate
                 {
                     throw new KeyNotFoundException($"HolidayPackage with ID {id} not found.");
                 }
-                return await _repository.DeleteProductAsync(id);
+                return await _repository.DeleteProductAsync(product);
             }
             catch (Exception)
             {
