@@ -4,10 +4,8 @@ using Core.Domain.Entities;
 
 namespace Core.Application.Interfaces
 {
-    public interface IAddableProduct<T,TDto>
-        where T: Product
-        where TDto:ProductDto
+    public interface IAddableProduct
     {
-        Task<Guid> AddProductAsync(TDto productRequest); 
+        Task<Guid> AddProductAsync(ProductDto productRequest);
     }
 }

@@ -1,5 +1,6 @@
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using ProductServiceAPI.Infrastructure.DependencyInjection;
 
 namespace ProductServiceAPI
 {
@@ -26,7 +27,6 @@ namespace ProductServiceAPI
             {
                 try
                 {
-
                     using var scope = app.Services.CreateScope();
                     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
@@ -35,10 +35,17 @@ namespace ProductServiceAPI
                     var pendingMigrations = dbContext.Database.GetPendingMigrations().ToList();
                     if (pendingMigrations.Any())
                     {
-                        dbContext.Database.EnsureDeleted(); // Optional: Ensure the database is deleted before applying migrations
                         logger.LogInformation("Applying {Count} pending migrations: {Migrations}",
                             pendingMigrations.Count,
                             string.Join(", ", pendingMigrations));
+                            
+                        // Only delete database in development to preserve production data
+                        if (app.Environment.IsDevelopment() && args.Length > 0 && args[0] == "--apply-migrations")
+                        {
+                            dbContext.Database.EnsureDeleted();
+                            logger.LogWarning("Database was deleted before applying migrations - DEV ENVIRONMENT ONLY");
+                        }
+                        
                         dbContext.Database.Migrate();
                     }
                     else

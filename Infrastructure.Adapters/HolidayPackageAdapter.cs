@@ -11,7 +11,7 @@ namespace Infrastructure.Adapters
 
         public async Task<List<ProductDto>> FetchProductsAsync()
         {
-            // var apiUrl = "https://9fa670d1-1dd5-4cf6-819b-46fff26ce06f.mock.pstmn.io/hotels";
+            
             var apiUrl = "https://67c6dc0b-2e55-4479-9fa6-af5934f21e03.mock.pstmn.io/holidays";
             var apiKey = "your-api-key";
             var result = new List<ProductDto>();
@@ -37,8 +37,8 @@ namespace Infrastructure.Adapters
                     foreach (var package in apiPackages)
                     {
                         var property = package.Property is null
-                            ? new HolidayPackageDto.PropertyInfo()
-                            : new HolidayPackageDto.PropertyInfo
+                            ? new ApiProperty()
+                            : new ApiProperty
                             {
                                 Id = package.Property.Id,
                                 Name = package.Property.Name,
@@ -47,13 +47,13 @@ namespace Infrastructure.Adapters
                                 Amenities = package.Property.Amenities ?? new List<string>(),
                                 Location = package.Property.Location is null
                                     ? null
-                                    : new HolidayPackageDto.LocationInfo
+                                    : new ApiLocation
                                     {
                                         Country = package.Property.Location.Country,
                                         Island = package.Property.Location.Island,
                                         Coordinates = package.Property.Location.Coordinates is null
                                             ? null
-                                            : new HolidayPackageDto.Coordinates
+                                            : new ApiCoordinates
                                             {
                                                 Latitude = package.Property.Location.Coordinates.Latitude,
                                                 Longitude = package.Property.Location.Coordinates.Longitude
@@ -62,12 +62,12 @@ namespace Infrastructure.Adapters
                                     }
                             };
 
-                        var roomOptions = new List<HolidayPackageDto.RoomOption>();
+                        var roomOptions = new List<ApiRoomOption>();
                         if (package.RoomOptions != null)
                         {
                             foreach (var apiRoom in package.RoomOptions)
                             {
-                                roomOptions.Add(new HolidayPackageDto.RoomOption
+                                roomOptions.Add(new ApiRoomOption
                                 {
                                     RoomType = apiRoom.RoomType,
                                     MaxOccupancy = apiRoom.MaxOccupancy,
@@ -77,7 +77,7 @@ namespace Infrastructure.Adapters
                                     Amenities = apiRoom.Amenities ?? new List<string>(),
                                     Price = apiRoom.Price is null
                                         ? null
-                                        : new HolidayPackageDto.RoomPrice
+                                        : new ApiRoomPrice
                                         {
                                             PerNight = apiRoom.Price.PerNight,
                                             Total = apiRoom.Price.Total,
@@ -88,15 +88,15 @@ namespace Infrastructure.Adapters
                             }
                         }
 
-                        var specialOffers = new List<HolidayPackageDto.SpecialOffer>();
+                        var specialOffers = new List<SpecialOffer>();
                         if (package.SpecialOffers != null)
                         {
                             foreach (var apiOffer in package.SpecialOffers)
                             {
-                                specialOffers.Add(new HolidayPackageDto.SpecialOffer
+                                specialOffers.Add(new SpecialOffer
                                 {
-                                    Name = apiOffer.Name,
-                                    Description = apiOffer.Description,
+                                    Name = apiOffer.Name ?? "",
+                                    Description = apiOffer.Description ?? "",
                                     Discount = apiOffer.Discount.HasValue ? (decimal?)apiOffer.Discount.Value : null,
                                     ValidUntil = apiOffer.ValidUntil != null ? DateTime.TryParse(apiOffer.ValidUntil, out var date) ? date : null : null,
                                     RequiresVerification = apiOffer.RequiresVerification
@@ -120,31 +120,33 @@ namespace Infrastructure.Adapters
                                 firstRoom.Price.Currency ?? "USD")
                             : Price.Create(0m, "USD");
 
-                        //var availability = package.Availability is null
-                        //    ? new AvailabilityInfo("contact us", 100) { IsAvailable = true } 
-                        //    : new AvailabilityInfo(package.Availability.Status ?? "contact us", package.Availability.RemainingSlots ) { IsAvailable = true };
-                            var availability = new AvailabilityInfo("contact us", 100) { IsAvailable = true }; // since availability is not provided in the API response, we set a default value
+                        var availability = new AvailabilityInfo("contact us", 100) { IsAvailable = true }; // since availability is not provided in the API response, we set a default value
 
-                        var dto = new HolidayPackageDto(
+                        Dictionary<string, object> attributes = [];
+                        attributes.Add("property", property);
+                        attributes.Add("roomOptions", roomOptions);
+                        attributes.Add("specialOffers", specialOffers);
+                        attributes.Add("cancellationPolicy", cancellationPolicy);
+                        if (firstRoom != null) attributes.Add("firstRoom", firstRoom);
+
+
+                        ProductDto dto = new(
                             id: Guid.NewGuid(),
                             externalId: package.PackageId,
                             name: package.Name,
                             price: price,
-                            availability: availability, 
+                            availability: availability,
                             description: package.Description ?? string.Empty,
                             category: ProductCategory.HolidayPackage,
                             provider: AdapterName,
-                            imageUrl: package.Images?.FirstOrDefault() ?? string.Empty,
+                            imageUrl: package.Images ?? [],
                             createdAt: DateTime.UtcNow,
-                            updatedAt: DateTime.UtcNow,
-                            property: property,
-                            roomOptions: roomOptions,
-                            inclusions: package.Inclusions ?? new List<string>(),
-                            specialOffers: specialOffers,
-                            cancellationPolicy: cancellationPolicy,
-                            images: package.Images ?? new List<string>(),
-                            lastUpdated: DateTime.TryParse(package.LastUpdated, out var lastUpd) ? lastUpd : DateTime.UtcNow
-                        );
+                            updatedAt: DateTime.UtcNow
+                            )
+                        {
+                            Attributes = attributes,
+                        }
+                    ;
 
                         result.Add(dto);
                     }
@@ -162,17 +164,16 @@ namespace Infrastructure.Adapters
             {
                 throw new Exception($"An unexpected error occurred: {ex.Message}", ex);
             }
-
             return result;
         }
 
-        public  Task<ProductDto?> FetchProductByIdAsync(string externalId)
+        public Task<ProductDto?> FetchProductByIdAsync(string externalId)
         {
             // this was done like this because the mock API does not support fetching a single product by ID directly.
             // so we fetch all products and filter them by externalId to mimic the behavior of fetching a single product.
-            var products =  FetchProductsAsync();
-            
-            if(products == null || products.Result.Count == 0)
+            var products = FetchProductsAsync();
+
+            if (products == null || products.Result.Count == 0)
             {
                 throw new HttpRequestException("Failed to retrieve any products from the holiday package API.");
 

@@ -9,12 +9,12 @@ namespace Core.Application.Features.Products.Commands.PurchaseProduct
     {
 
 
-        private readonly IProductService<Product, ProductDto> _productService;
+        private readonly IProductService _productService;
 
 
 
         public PurchaseProductCommandHandler(
-            IProductService<Product, ProductDto> productService)
+            IProductService productService)
 
         {
             _productService = productService ?? throw new ArgumentNullException(nameof(productService));

@@ -7,19 +7,12 @@ namespace Core.Application.Features.Products.Queries.GetAllProducts
 {
     public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, List<ProductDto>>
     {
-
-        private readonly IProductService<TourPackage, TourPackageDto> _tourPackageService;
-        private readonly IProductService<HolidayPackage, HolidayPackageDto> _holidayPackageService;
-        private readonly IProductService<CustomProduct, CustomProductDto> _customProductService;
+        private readonly IProductService _productService;
 
         public GetProductsQueryHandler(
-            IProductService<TourPackage, TourPackageDto> tourPackageService,
-            IProductService<HolidayPackage, HolidayPackageDto> holidayPackageService,
-            IProductService<CustomProduct, CustomProductDto> customProductService)
+            IProductService ProductService)
         {
-            _tourPackageService = tourPackageService;
-            _holidayPackageService = holidayPackageService;
-            _customProductService = customProductService;
+            _productService = ProductService;
         }
 
         async Task<List<ProductDto>> IRequestHandler<GetProductsQuery, List<ProductDto>>.Handle(GetProductsQuery request, CancellationToken cancellationToken)
@@ -28,89 +21,27 @@ namespace Core.Application.Features.Products.Queries.GetAllProducts
 
             try
             {
-                var holidayPackages = new List<HolidayPackageDto>();
-                var tourPackages = new List<TourPackageDto>();
-                var customProducts = new List<CustomProductDto>();
+                var customProducts = await _productService.GetProductsAsync() as List<ProductDto> ?? [];
 
-                switch (request.Category)
+                // Apply filters if provided
+                if (!string.IsNullOrEmpty(request.Provider))
                 {
-                    case Domain.Enums.ProductCategory.HolidayPackage:
-
-                        holidayPackages = await _holidayPackageService.GetProductsAsync() as List<HolidayPackageDto>
-                            ?? [];
-
-                        // Apply filters
-                        if (request.Provider != null && request.Provider != string.Empty)
-                        {
-                            holidayPackages = holidayPackages.Where(p => p.Provider == request.Provider).ToList();
-                        }
-                        if (request.ExternalId != null && request.ExternalId != string.Empty)
-                        {
-                            holidayPackages = holidayPackages.Where(p => p.ExternalId == request.ExternalId).ToList();
-                        }
-
-                        allProducts.AddRange(holidayPackages.Select(p => (ProductDto)p));
-                        break;
-
-                    case Domain.Enums.ProductCategory.TourPackage:
-                        tourPackages = await _tourPackageService.GetProductsAsync() as List<TourPackageDto>
-                            ?? [];
-
-                        // Apply filters
-                        if (request.Provider != null && request.Provider != string.Empty)
-                        {
-                            tourPackages = tourPackages.Where(p => p.Provider == request.Provider).ToList();
-                        }
-                        if (request.ExternalId != null && request.ExternalId != string.Empty)
-                        {
-                            tourPackages = tourPackages.Where(p => p.ExternalId == request.ExternalId).ToList();
-                        }
-
-                        allProducts.AddRange(tourPackages.Select(p => (ProductDto)p));
-                        break;
-
-                    case Domain.Enums.ProductCategory.Custom:
-                        customProducts = await _customProductService.GetProductsAsync() as List<CustomProductDto>
-                            ?? [];
-                        // Apply filters
-                        if (request.Provider != null && request.Provider != string.Empty)
-                        {
-                            customProducts = customProducts.Where(p => p.Provider == request.Provider).ToList();
-                        }
-                        if (request.ExternalId != null && request.ExternalId != string.Empty)
-                        {
-                            customProducts = customProducts.Where(p => p.ExternalId == request.ExternalId).ToList();
-                        }
-                        allProducts.AddRange(customProducts.Select(p => (ProductDto)p));
-                        break;
-
-                    default:
-                        // Get all types of products when no category is specified
-                        holidayPackages = await _holidayPackageService.GetProductsAsync() as List<HolidayPackageDto>
-                            ?? [];
-                        tourPackages = await _tourPackageService.GetProductsAsync() as List<TourPackageDto>
-                            ?? [];
-                        customProducts = await _customProductService.GetProductsAsync() as List<CustomProductDto>
-                            ?? [];
-
-                        // Apply filters to both collections
-                        if (request.Provider != null && request.Provider != string.Empty)
-                        {
-                            holidayPackages = holidayPackages.Where(p => p.Provider == request.Provider).ToList();
-                            tourPackages = tourPackages.Where(p => p.Provider == request.Provider).ToList();
-                            customProducts = customProducts.Where(p => p.Provider == request.Provider).ToList();
-                        }
-                        if (request.ExternalId != null && request.ExternalId != string.Empty)
-                        {
-                            holidayPackages = holidayPackages.Where(p => p.ExternalId == request.ExternalId).ToList();
-                            tourPackages = tourPackages.Where(p => p.ExternalId == request.ExternalId).ToList();
-                        }
-
-                        allProducts.AddRange(holidayPackages.Select(p => (ProductDto)p));
-                        allProducts.AddRange(tourPackages.Select(p => (ProductDto)p));
-                        allProducts.AddRange(customProducts.Select(p => (ProductDto)p));
-                        break;
+                    customProducts = customProducts.Where(p => p.Provider == request.Provider).ToList();
                 }
+
+                if (!string.IsNullOrEmpty(request.ExternalId))
+                {
+                    customProducts = customProducts.Where(p => p.ExternalId == request.ExternalId).ToList();
+                }
+
+                // Filter by category if specified
+                if (request.Category.HasValue && request.Category.Value != Domain.Enums.ProductCategory.Custom)
+                {
+                    // Return empty list if looking for non-custom products
+                    return allProducts;
+                }
+
+                allProducts.AddRange(customProducts.Select(p => (ProductDto)p));
             }
             catch (Exception)
             {

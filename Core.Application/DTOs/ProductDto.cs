@@ -15,9 +15,11 @@ namespace Core.Application.DTOs
         public ProductCategory Category { get; set; }
         public string Provider { get; set; }
 
-        public string? ImageUrl { get; set; }
+        public List<string>? ImageUrl { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+
+        public Dictionary<string, object> Attributes { get; set; }
 
 
 
@@ -30,7 +32,7 @@ namespace Core.Application.DTOs
             string description,
             ProductCategory category,
             string provider,
-            string imageUrl,
+            List<string> imageUrl,
             DateTime createdAt,
             DateTime updatedAt)
         {
@@ -45,6 +47,7 @@ namespace Core.Application.DTOs
             ImageUrl = imageUrl;
             CreatedAt = createdAt;
             UpdatedAt = updatedAt;
+            Attributes = [];
         }
     }
 }

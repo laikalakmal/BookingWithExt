@@ -9,9 +9,9 @@ namespace Core.Application.Features.Products.Commands.AddProduct
 {
     public class AddProductCommandHandler : IRequestHandler<AddProductCommand, Guid>
     {
-        private readonly IAddableProduct<CustomProduct,CustomProductDto> _customProductService;
+        private readonly IAddableProduct _customProductService;
 
-        public AddProductCommandHandler(IAddableProduct<CustomProduct,CustomProductDto> customProductService)
+        public AddProductCommandHandler(IAddableProduct customProductService)
         {
             _customProductService = customProductService ?? throw new ArgumentNullException(nameof(customProductService));
         }
@@ -21,10 +21,10 @@ namespace Core.Application.Features.Products.Commands.AddProduct
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
-            var productRequest = request.Request;
+            AddProductRequest productRequest = request.Request;
 
             // Map to DTO
-            var customProductDto = new CustomProductDto(
+            var customProductDto = new ProductDto(
                 id: Guid.NewGuid(),
                 externalId: productRequest.ExternalId ?? Guid.NewGuid().ToString(),
                 name: productRequest.Name ?? string.Empty,
@@ -40,11 +40,13 @@ namespace Core.Application.Features.Products.Commands.AddProduct
                 description: productRequest.Description ?? string.Empty,
                 category: productRequest.Category,
                 provider: productRequest.Provider ?? "BookWithExt",
-                imageUrl: productRequest.ImageUrl ?? string.Empty,
+                imageUrl: new List<string> { productRequest.ImageUrl ?? "" } ?? [],
                 createdAt: DateTime.UtcNow,
-                updatedAt: DateTime.UtcNow,
-                attributes: productRequest.Attributes ?? new Dictionary<string, object>()
-            );
+                updatedAt: DateTime.UtcNow
+            )
+            {
+                Attributes = productRequest.Attributes ?? []
+            };
 
             // Use the service to add the product
             var result = await _customProductService.AddProductAsync(customProductDto);
