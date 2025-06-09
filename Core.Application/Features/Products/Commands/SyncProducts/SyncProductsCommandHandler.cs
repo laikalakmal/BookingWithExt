@@ -14,11 +14,11 @@ namespace Core.Application.Features.Products.Commands.SyncProducts
 
         public async Task<SyncProductsResponse> Handle(SyncProductsCommand request, CancellationToken cancellationToken)
         {
-            var response = new SyncProductsResponse();
+            SyncProductsResponse response = new SyncProductsResponse();
             try
             {
-                var holidayCount = await _service.SyncProductsFromExternalAsync();
-                response.HolidayCount = holidayCount;
+                var totalCount = await _service.SyncProductsFromExternalAsync();
+                response.TotalCount = totalCount;
 
             }
             catch (Exception ex)

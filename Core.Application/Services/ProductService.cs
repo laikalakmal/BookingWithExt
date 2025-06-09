@@ -70,7 +70,7 @@ namespace Core.Application.Services
                             )
                             {
                                 Id = dto.Id,
-                                ImageUrl = dto.ImageUrl ?? string.Empty,
+                                ImageUrl = dto.ImageUrl ?? [],
                                 CreatedAt = dto.CreatedAt,
                                 UpdatedAt = dto.UpdatedAt,
                                 Attributes = dto.Attributes
@@ -268,7 +268,7 @@ namespace Core.Application.Services
                 existingProduct.Provider = newProduct.Provider;
                 existingProduct.Availability = newProduct.Availability;
                 existingProduct.Attributes = newProduct.Attributes;
-                existingProduct.ImageUrl = newProduct.ImageUrl ?? string.Empty;
+                existingProduct.ImageUrl = newProduct.ImageUrl ?? [];
                 existingProduct.UpdatedAt = DateTime.UtcNow;
 
 

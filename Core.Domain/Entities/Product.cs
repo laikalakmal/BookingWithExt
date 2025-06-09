@@ -55,6 +55,6 @@ namespace Core.Domain.Entities
         public AvailabilityInfo Availability { get; set; }
 
         public Dictionary<string, object> Attributes { get; set; }
-        public string ImageUrl { get; set; } = string.Empty;
+        public List<string> ImageUrl { get; set; } = [];
     }
 }

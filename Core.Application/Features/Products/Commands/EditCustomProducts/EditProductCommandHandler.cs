@@ -46,7 +46,7 @@ namespace Core.Application.Features.Products.Commands.EditCustomProducts
                     description: request.productRequest.Description ?? string.Empty,
                     category: request.productRequest.Category,
                     provider: request.productRequest.Provider ?? string.Empty,
-                    imageUrl: request.productRequest.ImageUrl ?? string.Empty,
+                    imageUrl: new List<string>{request.productRequest.ImageUrl ??""} ?? [],
                     createdAt: DateTime.UtcNow,
                     updatedAt: DateTime.UtcNow
                 )

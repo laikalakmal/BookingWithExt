@@ -21,7 +21,7 @@ namespace Core.Application.Features.Products.Commands.AddProduct
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
-            var productRequest = request.Request;
+            AddProductRequest productRequest = request.Request;
 
             // Map to DTO
             var customProductDto = new ProductDto(
@@ -40,7 +40,7 @@ namespace Core.Application.Features.Products.Commands.AddProduct
                 description: productRequest.Description ?? string.Empty,
                 category: productRequest.Category,
                 provider: productRequest.Provider ?? "BookWithExt",
-                imageUrl: productRequest.ImageUrl ?? string.Empty,
+                imageUrl: new List<string> { productRequest.ImageUrl ?? "" } ?? [],
                 createdAt: DateTime.UtcNow,
                 updatedAt: DateTime.UtcNow
             )

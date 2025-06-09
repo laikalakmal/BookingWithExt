@@ -31,7 +31,7 @@ namespace ProductServiceAPI.Controllers
             try
             {
                 var result = await _mediator.Send(new SyncProductsCommand());
-                return Ok($"Successfully synced {result.TotalCount} products. (Holiday packages: {result.HolidayCount}, Tour packages: {result.TourCount})");
+                return Ok($"Successfully synced {result.TotalCount} products.");
             }
             catch
             {

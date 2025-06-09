@@ -139,7 +139,7 @@ namespace Infrastructure.Adapters
                             description: package.Description ?? string.Empty,
                             category: ProductCategory.HolidayPackage,
                             provider: AdapterName,
-                            imageUrl: package.Images?.FirstOrDefault() ?? string.Empty,
+                            imageUrl: package.Images ?? [],
                             createdAt: DateTime.UtcNow,
                             updatedAt: DateTime.UtcNow
                             )

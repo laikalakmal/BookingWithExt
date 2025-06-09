@@ -27,7 +27,7 @@ namespace Core.Application.Mappings
                 )
             {
                 Attributes = product.Attributes,
-                ImageUrl = product.ImageUrl ?? string.Empty
+                ImageUrl = product.ImageUrl ?? []
             };
         }
 
@@ -49,7 +49,7 @@ namespace Core.Application.Mappings
                 Id = productDto.Id,
                 CreatedAt = productDto.CreatedAt,
                 UpdatedAt = productDto.UpdatedAt,
-                ImageUrl = productDto.ImageUrl ?? string.Empty,
+                ImageUrl = productDto.ImageUrl ?? [],
                 Attributes = productDto.Attributes
             };
         }
