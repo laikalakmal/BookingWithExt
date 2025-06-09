@@ -8,12 +8,12 @@ namespace Core.Application.Features.Products.Queries.GetProducts
 {
     internal class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, ProductDto>
     {
-        private readonly IProductRepository<Product> _productRepository;
-        private readonly IProductService<Product, ProductDto> _productService;
+        private readonly IProductRepository _productRepository;
+        private readonly IProductService _productService;
 
         public GetProductByIdQueryHandler(
-            IProductRepository<Product> productRepository,
-            IProductService<Product, ProductDto> productService)
+            IProductRepository productRepository,
+            IProductService productService)
         {
             _productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository));
             _productService = productService ?? throw new ArgumentNullException(nameof(productService));

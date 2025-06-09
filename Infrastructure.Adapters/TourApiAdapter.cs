@@ -11,21 +11,14 @@ namespace Infrastructure.Adapters
 
         public async Task<ProductDto?> FetchProductByIdAsync(string externalId)
         {
-
             //since there is no real api endpoint in my mock server the product is fetched as follows.
             var products = await FetchProductsAsync();
             return products.Find(p => p.ExternalId == externalId);
-
-
-
         }
 
         public async Task<List<ProductDto>> FetchProductsAsync()
         {
-            //var apiUrl = "https://cc392dcc-ec4b-491a-a6af-c2e1b7ca4750.mock.pstmn.io/tours";
-
-
-            var apiUrl= "https://73a9649d-02aa-40ee-8c5a-c9fd60c90ecf.mock.pstmn.io/tours";
+            var apiUrl = "https://73a9649d-02aa-40ee-8c5a-c9fd60c90ecf.mock.pstmn.io/tours";
             var apiKey = "your-api-key";
             using var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Add("x-api-key", apiKey);
@@ -42,7 +35,7 @@ namespace Infrastructure.Adapters
             };
             var apiPackages = System.Text.Json.JsonSerializer.Deserialize<List<ApiTourPackage>>(json, options);
 
-            // Map to TourPackageDto
+            // Map to ProductDto
             List<ProductDto> result = new List<ProductDto>();
             if (apiPackages != null)
             {
@@ -55,8 +48,8 @@ namespace Infrastructure.Adapters
 
                     // Provide non-null default objects for required parameters
                     var destination = package.Destination is null
-                        ? new TourPackageDto.DestinationInfo { Country = string.Empty, City = string.Empty, Resort = string.Empty }
-                        : new TourPackageDto.DestinationInfo
+                        ? new ApiDestination { Country = string.Empty, City = string.Empty, Resort = string.Empty }
+                        : new ApiDestination
                         {
                             Country = package.Destination.Country ?? string.Empty,
                             City = package.Destination.City ?? string.Empty,
@@ -64,16 +57,16 @@ namespace Infrastructure.Adapters
                         };
 
                     var duration = package.Duration is null
-                        ? new TourPackageDto.DurationInfo()
-                        : new TourPackageDto.DurationInfo
+                        ? new ApiDuration()
+                        : new ApiDuration
                         {
                             Days = package.Duration.Days,
                             Nights = package.Duration.Nights
                         };
 
                     var accommodation = package.Accommodation is null
-                        ? new TourPackageDto.AccommodationInfo { Type = string.Empty, Rating = 0, Amenities = new List<string>() }
-                        : new TourPackageDto.AccommodationInfo
+                        ? new ApiAccommodation { Type = string.Empty, Rating = 0, Amenities = new List<string>() }
+                        : new ApiAccommodation
                         {
                             Type = package.Accommodation.Type ?? string.Empty,
                             Rating = package.Accommodation.Rating,
@@ -81,16 +74,16 @@ namespace Infrastructure.Adapters
                         };
 
                     var transportation = package.Transportation is null
-                        ? new TourPackageDto.TransportationInfo()
-                        : new TourPackageDto.TransportationInfo
+                        ? new ApiTransportation()
+                        : new ApiTransportation
                         {
-                            Flight = package.Transportation.Flight is null ? null : new TourPackageDto.FlightInfo
+                            Flight = package.Transportation.Flight is null ? null : new ApiFlight
                             {
                                 Airline = package.Transportation.Flight.Airline ?? string.Empty,
                                 Class = package.Transportation.Flight.Class ?? string.Empty,
                                 Included = package.Transportation.Flight.Included
                             },
-                            Transfers = package.Transportation.Transfers is null ? null : new TourPackageDto.TransferInfo
+                            Transfers = package.Transportation.Transfers is null ? null : new ApiTransfer
                             {
                                 Type = package.Transportation.Transfers.Type ?? string.Empty,
                                 Included = package.Transportation.Transfers.Included
@@ -114,30 +107,36 @@ namespace Infrastructure.Adapters
                             RemainingSlots = package.Availability.RemainingSlots
                         };
 
-                    var dto = new TourPackageDto(
+                    // Store tour-specific data in attributes dictionary
+                    Dictionary<string, object> attributes = new Dictionary<string, object>();
+                    attributes.Add("destination", destination);
+                    attributes.Add("duration", duration);
+                    attributes.Add("inclusions", package.Inclusions ?? new List<string>());
+                    attributes.Add("exclusions", package.Exclusions ?? new List<string>());
+                    attributes.Add("departureDates", package.DepartureDates?.Select(d => DateTime.Parse(d)).ToList() ?? new List<DateTime>());
+                    attributes.Add("accommodation", accommodation);
+                    attributes.Add("transportation", transportation);
+                    attributes.Add("cancellationPolicy", cancellationPolicy);
+                    attributes.Add("images", package.Images ?? new List<string>());
+                    attributes.Add("termsAndConditions", package.TermsAndConditions ?? string.Empty);
+                    attributes.Add("lastUpdated", DateTime.TryParse(package.LastUpdated, out var lastUpd) ? lastUpd : DateTime.UtcNow);
+
+                    var dto = new ProductDto(
                         id: Guid.NewGuid(),
                         externalId: package.PackageId,
                         name: package.Name,
                         price: price,
+                        availability: availability,
                         description: package.Description ?? string.Empty,
                         category: ProductCategory.TourPackage,
                         provider: AdapterName,
                         imageUrl: package.Images?.FirstOrDefault() ?? string.Empty,
                         createdAt: DateTime.UtcNow,
-                        updatedAt: DateTime.UtcNow,
-                        destination: destination,
-                        duration: duration,
-                        inclusions: package.Inclusions ?? new List<string>(),
-                        exclusions: package.Exclusions ?? new List<string>(),
-                        departureDates: package.DepartureDates?.Select(d => DateTime.Parse(d)).ToList() ?? new List<DateTime>(),
-                        accommodation: accommodation,
-                        transportation: transportation,
-                        cancellationPolicy: cancellationPolicy,
-                        availability: availability,
-                        images: package.Images ?? new List<string>(),
-                        termsAndConditions: package.TermsAndConditions ?? string.Empty,
-                        lastUpdated: DateTime.TryParse(package.LastUpdated, out var lastUpd) ? lastUpd : DateTime.UtcNow
-                    );
+                        updatedAt: DateTime.UtcNow
+                    )
+                    {
+                        Attributes = attributes
+                    };
 
                     result.Add(dto);
                 }
@@ -146,21 +145,14 @@ namespace Infrastructure.Adapters
             return result;
         }
 
-
-
         public async Task<PurchaseResponseDto> PurchaseProductAsync(ProductDto productDto, int quantity)
         {
-            // there should be a api call for purchasing a product from external API.
-            //since i'm working with mock api i will temporarly return a mock purchase response.
-            // in real use there should be a api call to purchase and if its data should be passed to the our API endpoint that respoinsible for purchasing product.
-
             if (quantity <= 0)
             {
                 throw new ArgumentException("Quantity must be greater than zero.", nameof(quantity));
             }
 
-            var product = FetchProductByIdAsync(productDto.ExternalId).Result;
-
+            var product = await FetchProductByIdAsync(productDto.ExternalId);
 
             if (product == null)
             {
@@ -171,11 +163,9 @@ namespace Infrastructure.Adapters
                     Provider = AdapterName,
                 };
             }
-            //check if product is available for purchase
+
             if (!product.Availability.IsAvailable || product.Availability.RemainingSlots < quantity)
             {
-
-
                 return new PurchaseResponseDto(productDto.ExternalId)
                 {
                     IsSuccess = false,
@@ -183,11 +173,6 @@ namespace Infrastructure.Adapters
                     Provider = AdapterName,
                 };
             }
-
-            // Mocking a purchase response, in real scenario this should be replaced with actual API call to purchase the product.
-
-
-
 
             var dto = new PurchaseResponseDto(Guid.NewGuid().ToString(), productDto.ExternalId)
             {
@@ -204,13 +189,7 @@ namespace Infrastructure.Adapters
             };
 
             return dto;
-
         }
-
-
-
-
-
 
         // Internal DTOs for deserialization
         private class ApiTourPackage
@@ -290,6 +269,5 @@ namespace Infrastructure.Adapters
             public string? Status { get; set; }
             public int RemainingSlots { get; set; }
         }
-
     }
 }

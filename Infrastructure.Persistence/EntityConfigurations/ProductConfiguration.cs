@@ -1,6 +1,7 @@
 ﻿using Core.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Text.Json;
 
 namespace Infrastructure.Persistence.EntityConfigurations
 {
@@ -27,6 +28,25 @@ namespace Infrastructure.Persistence.EntityConfigurations
                 availability.Property(a => a.Status).HasColumnType("nvarchar(max)");
                 availability.Property(a => a.RemainingSlots).HasConversion<int>();
             });
+
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+
+
+            entity.Property(e => e.Attributes)
+               .HasColumnName("Attributes")
+               .HasColumnType("nvarchar(max)")
+               .IsRequired(false)
+               .HasConversion(
+                   v => JsonSerializer.Serialize(v, options),
+                   v => string.IsNullOrEmpty(v)
+                       ? new Dictionary<string, object>()
+                       : JsonSerializer.Deserialize<Dictionary<string, object>>(v, options) ?? new Dictionary<string, object>() // Fix for CS8603
+               );
 
 
         }

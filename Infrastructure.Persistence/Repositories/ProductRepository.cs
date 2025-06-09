@@ -2,18 +2,18 @@
 using Core.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Persistence.Repositories.Concreate
+namespace Infrastructure.Persistence.Repositories
 {
-    public class CustomProductRepository : IProductRepository<CustomProduct>
+    public class ProductRepository : IProductRepository
     {
         private readonly AppDbContext _context;
 
-        public CustomProductRepository(AppDbContext context)
+        public ProductRepository(AppDbContext context)
         {
             _context = context;
         }
 
-        public async Task AddProductsAsync(List<CustomProduct> products)
+        public async Task AddProductsAsync(List<Product> products)
         {
             try
             {
@@ -21,12 +21,12 @@ namespace Infrastructure.Persistence.Repositories.Concreate
                     return;
 
                 var entities = products
-                    .Where(p => p is CustomProduct)
-                    .Cast<CustomProduct>();
+                    .Where(p => p is Product)
+                    .Cast<Product>();
 
                 if (entities.Any())
                 {
-                    _context.CustomProducts.AddRange(entities);
+                    _context.Products.AddRange(entities);
                     await _context.SaveChangesAsync();
                 }
             }
@@ -37,11 +37,11 @@ namespace Infrastructure.Persistence.Repositories.Concreate
         }
 
 
-        public async Task<CustomProduct> GetByIdAsync(Guid id)
+        public async Task<Product> GetByIdAsync(Guid id)
         {
             try
             {
-                return await _context.CustomProducts.FirstOrDefaultAsync(p => p.Id == id)
+                return await _context.Products.FirstOrDefaultAsync(p => p.Id == id)
                     ?? throw new Exception("Custom product not found");
             }
             catch (Exception ex)
@@ -50,11 +50,11 @@ namespace Infrastructure.Persistence.Repositories.Concreate
             }
         }
 
-        public async Task<IEnumerable<CustomProduct>> GetProductsAsync()
+        public async Task<IEnumerable<Product>> GetProductsAsync()
         {
             try
             {
-                return await _context.CustomProducts.ToListAsync();
+                return await _context.Products.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -62,11 +62,11 @@ namespace Infrastructure.Persistence.Repositories.Concreate
             }
         }
 
-        public async Task<bool> UpdateProduct(CustomProduct product)
+        public async Task<bool> UpdateProduct(Product product)
         {
             try
             {
-                var existing = await _context.CustomProducts.FirstOrDefaultAsync(p => p.Id == product.Id);
+                var existing = await _context.Products.FirstOrDefaultAsync(p => p.Id == product.Id);
                 if (existing == null)
                     return false;
 
@@ -81,20 +81,20 @@ namespace Infrastructure.Persistence.Repositories.Concreate
         }
         public async Task<bool> DeleteProductAsync(Guid id)
         {
-            var product = await _context.CustomProducts.FindAsync(id);
+            var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
                 return false;
             }
             else
             {
-                _context.CustomProducts.Remove(product);
+                _context.Products.Remove(product);
                 await _context.SaveChangesAsync();
                 return true;
             }
         }
 
-        public async Task<bool> DeleteProductAsync(CustomProduct product)
+        public async Task<bool> DeleteProductAsync(Product product)
         {
             try
             {
@@ -102,11 +102,11 @@ namespace Infrastructure.Persistence.Repositories.Concreate
                 {
                     throw new ArgumentNullException(nameof(product), "Product cannot be null.");
                 }
-                if (product is not CustomProduct customProduct)
+                if (product is not Product Product)
                 {
-                    throw new InvalidOperationException("Product is not of type CustomProduct.");
+                    throw new InvalidOperationException("Product is not of type Product.");
                 }
-                _context.CustomProducts.Remove(customProduct);
+                _context.Products.Remove(Product);
                 return await _context.SaveChangesAsync() > 0;
             }
             catch (Exception ex)

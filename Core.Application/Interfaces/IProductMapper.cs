@@ -3,15 +3,15 @@ using Core.Domain.Entities;
 
 namespace Core.Application.Interfaces
 {
-    public interface IProductMapper<TDomain, TDto> where TDomain : Product where TDto : ProductDto
+    public interface IProductMapper
     {
         /// Converts a domain entity to a DTO
         /// impliment this for each product type.
-        public static TDto FromDomain(TDomain product)
+        public static ProductDto FromDomain(Product product)
         {
             throw new NotImplementedException();
         }
-        public static TDomain ToDomain(TDto productDto)
+        public static Product ToDomain(ProductDto productDto)
         {
             throw new NotImplementedException();
         }

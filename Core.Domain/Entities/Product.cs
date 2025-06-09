@@ -1,11 +1,10 @@
 ﻿
 using Core.Domain.Entities.SupportClasses;
 using Core.Domain.Enums;
-using System.Net.Http.Headers;
 
 namespace Core.Domain.Entities
 {
-    public abstract class Product
+    public  class Product
     {
         public Product(
             string externalId,
@@ -26,16 +25,18 @@ namespace Core.Domain.Entities
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
             this.Availability = availability;
+            Attributes = [];
         }
 
         public Product()
         {
             Id = Guid.NewGuid();
-            Category =ProductCategory.Custom;
+            Category = ProductCategory.Custom;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
             Availability = new AvailabilityInfo();
             Provider = "BookWithExt";
+            Attributes = [];
         }
 
         public Guid Id { get; set; }
@@ -52,5 +53,8 @@ namespace Core.Domain.Entities
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public AvailabilityInfo Availability { get; set; }
+
+        public Dictionary<string, object> Attributes { get; set; }
+        public string ImageUrl { get; set; } = string.Empty;
     }
 }

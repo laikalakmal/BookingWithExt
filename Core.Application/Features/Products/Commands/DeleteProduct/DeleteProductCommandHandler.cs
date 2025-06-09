@@ -5,9 +5,9 @@ using MediatR;
 
 public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand, bool>
 {
-    private readonly IProductService<Product, ProductDto> _productService;
+    private readonly IProductService _productService;
 
-    public DeleteProductCommandHandler(IProductService<Product, ProductDto> productService)
+    public DeleteProductCommandHandler(IProductService productService)
     {
         _productService = productService;
     }

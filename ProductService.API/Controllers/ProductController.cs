@@ -5,8 +5,6 @@ using Core.Application.Features.Products.Commands.PurchaseProduct;
 using Core.Application.Features.Products.Commands.SyncProducts;
 using Core.Application.Features.Products.Queries.Availability;
 using Core.Application.Features.Products.Queries.GetAllProducts;
-using Core.Application.Features.Products.Queries.GetHolidayPackages;
-using Core.Application.Features.Products.Queries.GetTourPackages;
 using Core.Domain.Entities.SupportClasses;
 using Core.Domain.Enums;
 using MediatR;
@@ -94,41 +92,8 @@ namespace ProductServiceAPI.Controllers
             }
         }
 
-        [HttpGet("holiday-packages")]
-        public async Task<ActionResult<IEnumerable<HolidayPackageDto>>> GetHotels()
-        {
-            try
-            {
-                var hotels = await _mediator.Send(new GetHolidayPackagesQuery());
-                if (hotels == null || !hotels.Any())
-                {
-                    return NotFound("No hotels found.");
-                }
-                return Ok(hotels);
-            }
-            catch
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving holiday packages.");
-            }
-        }
 
-        [HttpGet("tour-packages")]
-        public async Task<ActionResult<IEnumerable<TourPackageDto>>> GetTours()
-        {
-            try
-            {
-                var tours = await _mediator.Send(new GetTourPackagesQuery());
-                if (tours == null || !tours.Any())
-                {
-                    return NotFound("No tours found.");
-                }
-                return Ok(tours);
-            }
-            catch
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving tour packages.");
-            }
-        }
+
 
         [HttpGet("{id}/availability")]
         public async Task<ActionResult<AvailabilityInfo>> GetProductAvailability(Guid id)
@@ -238,7 +203,7 @@ namespace ProductServiceAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, 
+                return StatusCode(StatusCodes.Status500InternalServerError,
                     $"An error occurred while updating the product: {ex.Message}");
             }
         }

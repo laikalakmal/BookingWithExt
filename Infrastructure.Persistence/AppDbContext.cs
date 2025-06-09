@@ -7,10 +7,8 @@ namespace Infrastructure.Persistence
     public class AppDbContext : DbContext
     {
         public DbSet<Product> Products { get; set; }
-        public DbSet<TourPackage> TourPackages { get; set; }
-        public DbSet<HolidayPackage> HolidayPackages { get; set; }
 
-        public DbSet<CustomProduct> CustomProducts { get; set; }
+   
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -21,9 +19,8 @@ namespace Infrastructure.Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new ProductConfiguration());
-            modelBuilder.ApplyConfiguration(new TourPackageConfiguration());
-            modelBuilder.ApplyConfiguration(new HolidayPackageConfiguration());
-            modelBuilder.ApplyConfiguration(new CustomProductConfiguration());
+
+          
         }
     }
 

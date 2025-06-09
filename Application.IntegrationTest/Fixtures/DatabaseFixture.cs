@@ -1,7 +1,6 @@
+using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Infrastructure.Persistence;
-using System;
 
 namespace Application.IntegrationTest.Fixtures
 {

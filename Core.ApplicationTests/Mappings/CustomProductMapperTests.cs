@@ -60,7 +60,7 @@ namespace Core.Application.Mappings.Tests
             Assert.AreEqual(DateTime.Parse("2024-02-20T14:15:00Z"), dto.UpdatedAt);
             Assert.AreEqual("Available", dto.Availability.Status);
             Assert.AreEqual(12, dto.Availability.RemainingSlots);
-            
+
             // Check attributes
             Assert.AreEqual(5, dto.Attributes.Count);
             Assert.AreEqual("Leather", dto.Attributes["Material"]);
@@ -108,7 +108,7 @@ namespace Core.Application.Mappings.Tests
             // Assert
             Assert.IsNotNull(domain);
             Assert.AreSame(domain.GetType(), typeof(Core.Domain.Entities.CustomProduct));
-            
+
             Assert.AreEqual(Guid.Parse("f47ac10b-58cc-4372-a567-0e02b2c3d479"), domain.Id);
             Assert.AreEqual("CUST123", domain.ExternalId);
             Assert.AreEqual("Custom Leather Bag", domain.Name);
@@ -122,7 +122,7 @@ namespace Core.Application.Mappings.Tests
             Assert.AreEqual(DateTime.Parse("2024-02-20T14:15:00Z"), domain.UpdatedAt);
             Assert.AreEqual("Available", domain.Availability.Status);
             Assert.AreEqual(12, domain.Availability.RemainingSlots);
-            
+
             // Check attributes
             Assert.AreEqual(5, domain.Attributes.Count);
             Assert.AreEqual("Leather", domain.Attributes["Material"]);

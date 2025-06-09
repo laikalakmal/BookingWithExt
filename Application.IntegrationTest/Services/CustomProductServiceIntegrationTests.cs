@@ -1,11 +1,11 @@
 using Application.IntegrationTest.Fixtures;
 using Core.Application.DTOs;
 using Core.Application.Interfaces;
-using Core.Application.Services.Concreate;
+using Core.Application.Services;
 using Core.Domain.Entities;
 using Core.Domain.Entities.SupportClasses;
 using Core.Domain.Enums;
-using Infrastructure.Persistence.Repositories.Concreate;
+using Infrastructure.Persistence.Repositories;
 
 namespace Application.IntegrationTest.Services
 {
@@ -14,9 +14,9 @@ namespace Application.IntegrationTest.Services
     {
         private DatabaseFixture _fixture;
         private IProductRepository<CustomProduct> _repository;
-        private CustomProductService _service;
+        private Core.Application.Services.ProductService _service;
 
-        private  Guid? TestProductId {get;set;}
+        private Guid? TestProductId { get; set; }
 
         [TestInitialize]
         public void Setup()
@@ -24,7 +24,7 @@ namespace Application.IntegrationTest.Services
             _fixture = new DatabaseFixture();
             _repository = new CustomProductRepository(_fixture.DbContext);
             _service = new CustomProductService(_repository);
-            
+
             // Seed test data
             SeedTestData().Wait();
         }
@@ -48,7 +48,7 @@ namespace Application.IntegrationTest.Services
             };
 
             TestProductId = product.Id;
-            
+
             _fixture.DbContext.Products.Add(product);
             await _fixture.DbContext.SaveChangesAsync();
         }
@@ -64,11 +64,11 @@ namespace Application.IntegrationTest.Services
         {
             // Act
             var products = await _service.GetProductsAsync();
-            
+
             // Assert
             Assert.IsNotNull(products);
             Assert.IsTrue(products.Any());
-            
+
             var product = products.FirstOrDefault(p => p.ExternalId == "CUSTOM-SVC-123");
             Assert.IsNotNull(product);
             Assert.AreEqual("Service Integration Test Product", product.Name);
@@ -82,7 +82,7 @@ namespace Application.IntegrationTest.Services
             var product = await _repository.GetByIdAsync(TestProductId.Value);
             // Act
             var result = await _service.GetByIdAsync(product.Id);
-            
+
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual("Service Integration Test Product", result.Name);
@@ -108,10 +108,10 @@ namespace Application.IntegrationTest.Services
                 updatedAt: product.UpdatedAt,
                 attributes: product.Attributes
             );
-            
+
             // Act
             var response = await _service.PurchaseProductAsync(purchaseDto, 2);
-            
+
             // Assert
             Assert.IsTrue(response.IsSuccess);
             Assert.AreEqual(2, response.Quantity);
@@ -137,7 +137,7 @@ namespace Application.IntegrationTest.Services
                 updatedAt: product.UpdatedAt,
                 attributes: product.Attributes
             );
-            
+
             // Act & Assert
             await Assert.ThrowsExceptionAsync<Exception>(() => _service.PurchaseProductAsync(purchaseDto, 25));
         }

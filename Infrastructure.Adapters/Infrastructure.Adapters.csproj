@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="HolidayPackageAdapter.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Core.Application\Core.Application.csproj" />
     <ProjectReference Include="..\Core.Domain\Core.Domain.csproj" />
   </ItemGroup>

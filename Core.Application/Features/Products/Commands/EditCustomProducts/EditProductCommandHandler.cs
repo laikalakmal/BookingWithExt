@@ -8,9 +8,9 @@ namespace Core.Application.Features.Products.Commands.EditCustomProducts
 {
     public class EditProductCommandHandler : IRequestHandler<EditProductCommand, EditProductResponse>
     {
-        private readonly IEditableProduct<CustomProductDto> _editableProduct;
+        private readonly IEditableProduct _editableProduct;
 
-        public EditProductCommandHandler(IEditableProduct<CustomProductDto> editableProduct)
+        public EditProductCommandHandler(IEditableProduct editableProduct)
         {
             _editableProduct = editableProduct ?? throw new ArgumentNullException(nameof(editableProduct));
         }
@@ -32,12 +32,12 @@ namespace Core.Application.Features.Products.Commands.EditCustomProducts
                 var price = Price.Create(
                     request.productRequest.Amount ?? 0,
                     request.productRequest.Currency ?? "USD");
-                
+
                 var availability = new AvailabilityInfo(
-                    request.productRequest.Availability?.Status, 
+                    request.productRequest.Availability?.Status,
                     request.productRequest.Availability?.RemainingSlots ?? 0);
-                
-                var customProductDto = new CustomProductDto(
+
+                var customProductDto = new ProductDto(
                     id: request.ProductId,
                     externalId: request.productRequest.ExternalId ?? string.Empty,
                     name: request.productRequest.Name ?? string.Empty,
@@ -48,9 +48,11 @@ namespace Core.Application.Features.Products.Commands.EditCustomProducts
                     provider: request.productRequest.Provider ?? string.Empty,
                     imageUrl: request.productRequest.ImageUrl ?? string.Empty,
                     createdAt: DateTime.UtcNow,
-                    updatedAt: DateTime.UtcNow,
-                    attributes: request.productRequest.Attributes ?? new Dictionary<string, object>()
-                );
+                    updatedAt: DateTime.UtcNow
+                )
+                {
+                    Attributes = request.productRequest.Attributes
+                };
 
                 // Call the editableProduct service to update the product
                 var result = await _editableProduct.EditProduct(request.ProductId, customProductDto);

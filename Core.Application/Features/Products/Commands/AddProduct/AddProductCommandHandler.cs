@@ -9,9 +9,9 @@ namespace Core.Application.Features.Products.Commands.AddProduct
 {
     public class AddProductCommandHandler : IRequestHandler<AddProductCommand, Guid>
     {
-        private readonly IAddableProduct<CustomProduct,CustomProductDto> _customProductService;
+        private readonly IAddableProduct _customProductService;
 
-        public AddProductCommandHandler(IAddableProduct<CustomProduct,CustomProductDto> customProductService)
+        public AddProductCommandHandler(IAddableProduct customProductService)
         {
             _customProductService = customProductService ?? throw new ArgumentNullException(nameof(customProductService));
         }
@@ -24,7 +24,7 @@ namespace Core.Application.Features.Products.Commands.AddProduct
             var productRequest = request.Request;
 
             // Map to DTO
-            var customProductDto = new CustomProductDto(
+            var customProductDto = new ProductDto(
                 id: Guid.NewGuid(),
                 externalId: productRequest.ExternalId ?? Guid.NewGuid().ToString(),
                 name: productRequest.Name ?? string.Empty,
@@ -42,9 +42,11 @@ namespace Core.Application.Features.Products.Commands.AddProduct
                 provider: productRequest.Provider ?? "BookWithExt",
                 imageUrl: productRequest.ImageUrl ?? string.Empty,
                 createdAt: DateTime.UtcNow,
-                updatedAt: DateTime.UtcNow,
-                attributes: productRequest.Attributes ?? new Dictionary<string, object>()
-            );
+                updatedAt: DateTime.UtcNow
+            )
+            {
+                Attributes = productRequest.Attributes ?? []
+            };
 
             // Use the service to add the product
             var result = await _customProductService.AddProductAsync(customProductDto);

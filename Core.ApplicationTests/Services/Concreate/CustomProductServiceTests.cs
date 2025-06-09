@@ -1,15 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Core.Application.Services.Concreate;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Moq;
+﻿using Core.Application.DTOs;
 using Core.Application.Interfaces;
 using Core.Domain.Entities;
-using Core.Application.DTOs;
 using Core.Domain.Enums;
+using Moq;
 
 namespace Core.Application.Services.Concreate.Tests
 {
@@ -17,20 +10,20 @@ namespace Core.Application.Services.Concreate.Tests
     public class CustomProductServiceTests
     {
         private Mock<IProductRepository<CustomProduct>> _mockRepository;
-        private CustomProductService _service;
+        private ProductService _service;
 
         [TestInitialize]
         public void Setup()
         {
             _mockRepository = new Mock<IProductRepository<CustomProduct>>();
-            _service = new CustomProductService(_mockRepository.Object);
+            _service = new ProductService(_mockRepository.Object);
         }
 
         [TestMethod()]
         public void CustomProductServiceTest()
         {
             // Arrange & Act
-            var service = new CustomProductService(_mockRepository.Object);
+            var service = new ProductService(_mockRepository.Object);
 
             // Assert
             Assert.IsNotNull(service);

@@ -4,8 +4,6 @@ using Core.Domain.Entities.SupportClasses;
 using Core.Domain.Enums;
 using Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Infrastructure.Persistence.Repositories.Concreate;
-using System.ComponentModel;
 namespace Application.IntegrationTest.Repositories
 {
     [TestClass]
