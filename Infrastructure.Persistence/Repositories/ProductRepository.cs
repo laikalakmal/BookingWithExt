@@ -71,6 +71,14 @@ namespace Infrastructure.Persistence.Repositories
                     return false;
 
                 _context.Entry(existing).CurrentValues.SetValues(product);
+
+                // Manually update complex object
+                existing.Availability = product.Availability;
+
+                // Manually update collections
+                existing.Attributes = new Dictionary<string, object>(product.Attributes);
+                existing.ImageUrl = new List<string>(product.ImageUrl);
+
                 await _context.SaveChangesAsync();
                 return true;
             }

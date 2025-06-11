@@ -3,6 +3,7 @@ using Core.Application.Interfaces;
 using Core.Domain.Entities;
 using Core.Domain.Entities.SupportClasses;
 using Core.Domain.Enums;
+using Core.Domain.ValueObjects;
 using MediatR;
 
 namespace Core.Application.Features.Products.Commands.AddProduct
