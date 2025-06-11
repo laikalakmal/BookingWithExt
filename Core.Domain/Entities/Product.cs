@@ -1,6 +1,7 @@
 ﻿
 using Core.Domain.Entities.SupportClasses;
 using Core.Domain.Enums;
+using Core.Domain.ValueObjects;
 
 namespace Core.Domain.Entities
 {

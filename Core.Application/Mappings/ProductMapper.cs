@@ -1,6 +1,7 @@
 ﻿using Core.Application.DTOs;
 using Core.Application.Interfaces;
 using Core.Domain.Entities;
+using Core.Domain.ValueObjects;
 
 
 namespace Core.Application.Mappings
