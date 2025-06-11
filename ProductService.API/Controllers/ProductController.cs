@@ -41,24 +41,20 @@ namespace ProductServiceAPI.Controllers
 
         [HttpGet("get")]
         public async Task<ActionResult<IEnumerable<ProductDto>>> SearchProducts(
-            [FromQuery][EnumDataType(typeof(ProductCategory))] ProductCategory? category = null,
             [FromQuery] string? externalId = null,
             [FromQuery] string? provider = null)
         {
             try
             {
                 GetProductsQuery query;
-                if (category == null && string.IsNullOrEmpty(externalId) && string.IsNullOrEmpty(provider))
+                if ( string.IsNullOrEmpty(externalId) && string.IsNullOrEmpty(provider))
                 {
                     query = new GetProductsQuery();
                 }
-                else if (category == null)
-                {
-                    query = new GetProductsQuery(externalId ?? string.Empty, provider ?? string.Empty);
-                }
+                
                 else
                 {
-                    query = new GetProductsQuery(category.Value, externalId ?? string.Empty, provider ?? string.Empty);
+                    query = new GetProductsQuery( externalId ?? string.Empty, provider ?? string.Empty);
                 }
 
                 var products = await _mediator.Send(query);
